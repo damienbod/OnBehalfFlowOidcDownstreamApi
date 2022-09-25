@@ -1,5 +1,4 @@
-﻿using IdentityModel.Client;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 
 namespace ApiAzureAuth;
