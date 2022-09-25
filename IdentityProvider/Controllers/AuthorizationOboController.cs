@@ -63,11 +63,11 @@ namespace IdentityProvider.Controllers
                 // TODO add claims as required if authorized
                 Subject = new ClaimsIdentity(new[] {
                     new Claim("sub", sub),
-                    new Claim("username", username) 
+                    new Claim("username", username) ,
+                    new Claim("scope", "dataEventRecords")
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 IssuedAt = DateTime.UtcNow,
-
                 Issuer = "https://localhost:44318/",
                 Audience = "rs_dataEventRecordsApi",
                 SigningCredentials = signingCredentials,
