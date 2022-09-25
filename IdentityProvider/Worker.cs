@@ -26,6 +26,24 @@ public class Worker : IHostedService
         {
             var manager = provider.GetRequiredService<IOpenIddictApplicationManager>();
 
+            // API delegated with OBO
+            if (await manager.FindByClientIdAsync("obo") == null)
+            {
+                var descriptor = new OpenIddictApplicationDescriptor
+                {
+                    ClientId = "OboFlowAadToOpenIddictApi",
+                    ClientSecret = "--in-user-secrets--",
+                    Permissions =
+                    {
+                        Permissions.Endpoints.Token,
+                        Permissions.Prefixes.Scope + "dataEventRecords",
+                        Permissions.Prefixes.GrantType + "urn:ietf:params:oauth:grant-type:jwt-bearer"
+                    }
+                };
+
+                await manager.CreateAsync(descriptor);
+            }
+
             // API delegated with introspection or CC
             if (await manager.FindByClientIdAsync("rs_dataEventRecordsApi") == null)
             {
