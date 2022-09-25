@@ -94,12 +94,23 @@ namespace IdentityProvider.Controllers
 
     public class OboPayload
     {
-        public string grant_type {get;set;}
-        public string client_id { get; set; }
-        public string client_secret { get; set; }
-        public string assertion { get; set; }
-        public string scope { get; set; }
-        public string requested_token_use { get; set; }
+        [JsonPropertyName("expiresIn")]
+        public string GrantType {get;set;}
+
+        [JsonPropertyName("client_id")]
+        public string ClientId { get; set; }
+
+        [JsonPropertyName("client_secret")]
+        public string ClientSecret { get; set; }
+
+        [JsonPropertyName("assertion")]
+        public string Assertion { get; set; }
+
+        [JsonPropertyName("scope")]
+        public string Scope { get; set; }
+
+        [JsonPropertyName("requested_token_use")]
+        public string RequestedTokenUse { get; set; }
     }
 
     public class OboResponse
