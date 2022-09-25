@@ -46,9 +46,9 @@ namespace IdentityProvider.Controllers
 
         private async Task<string> GenerateJwtTokenAsync(string username, string sub)
         {
-            var certs = await Startup.GetCertificates(_environment, Configuration);
+            var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, Configuration);
 
-            SigningCredentials signingCredentials = new X509SigningCredentials(certs.ActiveCertificate);
+            SigningCredentials signingCredentials = new X509SigningCredentials(ActiveCertificate);
 
             var alg = signingCredentials.Algorithm;
 
