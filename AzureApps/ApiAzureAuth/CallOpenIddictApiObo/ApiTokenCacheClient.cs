@@ -65,20 +65,19 @@ public class ApiTokenCacheClient
     {
         try
         {
+            // Not needed unless we use server discovery
+            //var httpClient =  _httpClientFactory.CreateClient();
+            //var disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
+            //    httpClient, _downstreamApiConfigurations.Value.IdentityProviderUrl);
 
-            var httpClient =  _httpClientFactory.CreateClient();
-            var disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
-                httpClient, _downstreamApiConfigurations.Value.IdentityProviderUrl);
-
-
-            if (disco.IsError)
-            {
-                _logger.LogError("disco error Status code: {discoIsError}, Error: {discoError}", disco.IsError, disco.Error);
-                throw new ApplicationException($"Status code: {disco.IsError}, Error: {disco.Error}");
-            }
+            //if (disco.IsError)
+            //{
+            //    _logger.LogError("disco error Status code: {discoIsError}, Error: {discoError}", disco.IsError, disco.Error);
+            //    throw new ApplicationException($"Status code: {disco.IsError}, Error: {disco.Error}");
+            //}
 
             var oboClient = _httpClientFactory.CreateClient();
-            oboClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.ApiBaseAddress);
+            oboClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.IdentityProviderUrl);
 
             // Content-Type: application/x-www-form-urlencoded
 
@@ -92,7 +91,7 @@ public class ApiTokenCacheClient
                 new KeyValuePair<string, string>("requested_token_use", "on_behalf_of"),
             };
             
-            var response = await oboClient.PostAsync(disco.TokenEndpoint, new FormUrlEncodedContent(oboTokenExchangeBody));
+            var response = await oboClient.PostAsync("/connect/obotoken", new FormUrlEncodedContent(oboTokenExchangeBody));
 
             if (response.IsSuccessStatusCode)
             {
