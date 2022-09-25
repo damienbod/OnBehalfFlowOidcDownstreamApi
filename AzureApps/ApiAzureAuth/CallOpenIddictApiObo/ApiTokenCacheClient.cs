@@ -1,7 +1,7 @@
-﻿using IdentityModel.Client;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
-using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ApiAzureAuth;
 
@@ -95,9 +95,10 @@ public class ApiTokenCacheClient
 
             if (response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadAsStringAsync();
+                var tokenResponse = await JsonSerializer.DeserializeAsync<OboResponse>(
+                await response.Content.ReadAsStreamAsync());
 
-                if (data != null)
+                if (tokenResponse != null)
                 {
                     return new AccessTokenItem
                     {
@@ -141,4 +142,12 @@ public class ApiTokenCacheClient
 
         return null;
     }
+}
+
+public class OboResponse
+{
+    [JsonPropertyName("expiresIn")]
+    public int ExpiresIn { get; set; }
+    [JsonPropertyName("accessToken")]
+    public string AccessToken { get; set; } = string.Empty;
 }

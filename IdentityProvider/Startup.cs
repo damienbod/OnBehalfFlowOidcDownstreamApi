@@ -6,15 +6,21 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 using Microsoft.IdentityModel.Logging;
 using Fido2Identity;
 using Fido2NetLib;
+using StsServerIdentity.Services.Certificate;
+using System.Security.Cryptography.X509Certificates;
 
 namespace OpeniddictServer;
 
 public class Startup
 {
-    public Startup(IConfiguration configuration)
-        => Configuration = configuration;
-
+    private IWebHostEnvironment _environment { get; }
     public IConfiguration Configuration { get; }
+
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
+    {
+        Configuration = configuration;
+        _environment = env;
+    }
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -98,6 +104,9 @@ public class Startup
         // Register the Quartz.NET service and configure it to block shutdown until jobs are complete.
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
+        var x509Certificate2Certs = GetCertificates(_environment, Configuration)
+            .GetAwaiter().GetResult();
+
         services.AddOpenIddict()
 
             // Register the OpenIddict core components.
@@ -139,7 +148,7 @@ public class Startup
 
                 // Register the signing and encryption credentials.
                 options.AddDevelopmentEncryptionCertificate()
-                       .AddDevelopmentSigningCertificate();
+                       .AddSigningCertificate(x509Certificate2Certs.ActiveCertificate);
 
                 // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
                 options.UseAspNetCore()
@@ -201,5 +210,29 @@ public class Startup
             endpoints.MapDefaultControllerRoute();
             endpoints.MapRazorPages();
         });
+    }
+
+    public static async Task<(X509Certificate2 ActiveCertificate, X509Certificate2 SecondaryCertificate)> GetCertificates(
+        IWebHostEnvironment environment, IConfiguration configuration)
+    {
+        var certificateConfiguration = new CertificateConfiguration
+        {
+            // Use an Azure key vault
+            CertificateNameKeyVault = configuration["CertificateNameKeyVault"], //"StsCert",
+            KeyVaultEndpoint = configuration["AzureKeyVaultEndpoint"], // "https://damienbod.vault.azure.net"
+
+            // Use a local store with thumbprint
+            //UseLocalCertStore = Convert.ToBoolean(configuration["UseLocalCertStore"]),
+            //CertificateThumbprint = configuration["CertificateThumbprint"],
+
+            // development certificate
+            DevelopmentCertificatePfx = Path.Combine(environment.ContentRootPath, "sts_dev_cert.pfx"),
+            DevelopmentCertificatePassword = "1234" //configuration["DevelopmentCertificatePassword"] //"1234",
+        };
+
+        (X509Certificate2 ActiveCertificate, X509Certificate2 SecondaryCertificate) certs = await CertificateService.GetCertificates(
+            certificateConfiguration).ConfigureAwait(false);
+
+        return certs;
     }
 }

@@ -3,13 +3,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using OpeniddictServer;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 namespace IdentityProvider.Controllers
 {
     public class AuthorizationOboController : Controller
     {
+        private IWebHostEnvironment _environment { get; }
+        public IConfiguration Configuration { get; }
+
+        public AuthorizationOboController(IConfiguration configuration, IWebHostEnvironment env)
+        {
+            Configuration = configuration;
+            _environment = env;
+        }
+
         [AllowAnonymous]
         [HttpPost("~/connect/obotoken"), Produces("application/json")]
         public async Task<IActionResult> Exchange([FromForm] OboPayload oboPayload)
@@ -25,16 +36,18 @@ namespace IdentityProvider.Controllers
             var accessToken = await GenerateJwtTokenAsync(
                 "alice@alice.com", "newSubsssssuuuubbb");
 
-            return Ok(new AccessTokenItem
+            return Ok(new OboResponse
             {
-                ExpiresIn = DateTime.UtcNow.AddHours(1),
+                ExpiresIn = 60 * 60,
                 AccessToken = accessToken
             });
         }
 
         private async Task<string> GenerateJwtTokenAsync(string username, string sub)
         {
-            SigningCredentials signingCredentials = await certApi.GetSigningCredentialsAsync();
+            var certs = await Startup.GetCertificates(_environment, Configuration);
+
+            SigningCredentials signingCredentials = new X509SigningCredentials(certs.ActiveCertificate);
 
             var alg = signingCredentials.Algorithm;
 
@@ -86,9 +99,11 @@ namespace IdentityProvider.Controllers
         public string requested_token_use { get; set; }
     }
 
-    public class AccessTokenItem
+    public class OboResponse
     {
-        public DateTime ExpiresIn { get; set; }
-        public string AccessToken { get; set; }
+        [JsonPropertyName("expiresIn")]
+        public int ExpiresIn { get; set; }
+        [JsonPropertyName("accessToken")]
+        public string AccessToken { get; set; } = string.Empty;
     }
 }
