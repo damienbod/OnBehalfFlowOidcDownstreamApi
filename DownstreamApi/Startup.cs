@@ -1,6 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.OpenApi.Models;
 using OpenIddict.Validation.AspNetCore;
 
 namespace DownstreamOpenIddictWebApi;
@@ -57,6 +59,43 @@ public class Startup
             });
         });
 
+        services.AddSwaggerGen(c =>
+        {
+            // add JWT Authentication
+            var securityScheme = new OpenApiSecurityScheme
+            {
+                Name = "JWT Authentication",
+                Description = "Enter JWT Bearer token **_only_**",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer", // must be lower case
+                BearerFormat = "JWT",
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+            c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {securityScheme, Array.Empty<string>()}
+            });
+
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Openiddict API",
+                Version = "v1",
+                Description = "Openiddict API",
+                Contact = new OpenApiContact
+                {
+                    Name = "damienbod",
+                    Email = string.Empty,
+                    Url = new Uri("https://damienbod.com/"),
+                },
+            });
+        });
+
         services.AddControllers();
     }
 
@@ -74,6 +113,13 @@ public class Startup
             app.UseExceptionHandler("/Error");
             app.UseHsts();
         }
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Openiddict API");
+            c.RoutePrefix = "swagger";
+        });
 
         app.UseStaticFiles();
         app.UseRouting();
