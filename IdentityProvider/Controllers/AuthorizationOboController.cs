@@ -118,10 +118,12 @@ namespace IdentityProvider.Controllers
     {
         [JsonPropertyName("expires_in")]
         public int ExpiresIn { get; set; }
-        [JsonPropertyName("accessToken")]
+        [JsonPropertyName("access_token")]
         public string AccessToken { get; set; } = string.Empty;
         [JsonPropertyName("token_type")]
         public string TokenType { get; set; } = "Bearer";
+        [JsonPropertyName("issued_token_type")]
+        public string IssuedTokenType { get; set; } = "urn:ietf:params:oauth:token-type:access_token";
         [JsonPropertyName("scope")]
         public string Scope { get; set; } = string.Empty;
     }
