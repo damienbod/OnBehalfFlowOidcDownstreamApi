@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
-    <UserSecretsId>728e892b-c8e1-40df-a44c-805a4a138e98</UserSecretsId>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>79b68e89-559b-4671-9407-1c33663c2792</UserSecretsId>
     <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
