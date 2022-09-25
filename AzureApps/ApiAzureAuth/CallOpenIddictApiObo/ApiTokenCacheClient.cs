@@ -1,5 +1,10 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using Azure.Core;
+using IdentityModel.Client;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
+using System.Net.Http;
+using System.Text.Json;
+using static IdentityModel.OidcConstants;
 
 namespace ApiAzureAuth;
 
@@ -63,14 +68,51 @@ public class ApiTokenCacheClient
     {
         try
         {
-            
 
-            // TODO OBO flow
+            var disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
+                _httpClient, _downstreamApiConfigurations.Value.IdentityProviderUrl);
+
+
+            if (disco.IsError)
+            {
+                _logger.LogError("disco error Status code: {discoIsError}, Error: {discoError}", disco.IsError, disco.Error);
+                throw new ApplicationException($"Status code: {disco.IsError}, Error: {disco.Error}");
+            }
+
+            _httpClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.ApiBaseAddress);
+
+            // Content-Type: application/x-www-form-urlencoded
+
+            var oboTokenExchangeBody = new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer"),
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("client_secret", clientSecret),
+                new KeyValuePair<string, string>("assertion", aadAccessToken),
+                new KeyValuePair<string, string>("scope", scope),
+                new KeyValuePair<string, string>("requested_token_use", "on_behalf_of"),
+            };
+            
+            var response = await _httpClient.PostAsync(disco.TokenEndpoint, new FormUrlEncodedContent(oboTokenExchangeBody));
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+
+                if (data != null)
+                {
+                    //return new AccessTokenItem
+                    //{
+                    //    ExpiresIn = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn),
+                    //    AccessToken = tokenResponse.AccessToken
+                    //};
+                }
+            }
 
             return new AccessTokenItem
             {
-                ExpiresIn = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn),
-                AccessToken = tokenResponse.AccessToken
+                ExpiresIn = DateTime.UtcNow,// DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn),
+                AccessToken = "aaaa" // tokenResponse.AccessToken
             };
                 
         }
