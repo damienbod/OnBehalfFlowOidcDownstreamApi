@@ -349,3 +349,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /_logs-downstream-api.txt
+/AzureApps/_logs-api-azure-auth-api.txt
