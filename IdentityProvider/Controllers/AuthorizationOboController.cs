@@ -25,11 +25,11 @@ namespace IdentityProvider.Controllers
         [HttpPost("~/connect/obotoken"), Produces("application/json")]
         public async Task<IActionResult> Exchange([FromForm] OboPayload oboPayload)
         {
-            // TODO validate data and token
+            // TODO validate request body data and AAD token
             // var validate = oboPayload;
 
             // TODO
-            // get claims from aad token
+            // get claims from aad token and re use in OpenIddict token
 
             // use data and return new access token
 

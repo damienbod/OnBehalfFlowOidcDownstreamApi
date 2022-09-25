@@ -34,7 +34,7 @@ public class ApiTokenCacheClient
         _cache = cache;
     }
 
-    public async Task<string> GetApiToken(string clientId, 
+    public async Task<string> GetApiTokenObo(string clientId, 
         string scope, string clientSecret, string aadAccessToken)
     {
         var accessToken = GetFromCache(clientId);
@@ -65,22 +65,10 @@ public class ApiTokenCacheClient
     {
         try
         {
-            // Not needed unless we use server discovery
-            //var httpClient =  _httpClientFactory.CreateClient();
-            //var disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
-            //    httpClient, _downstreamApiConfigurations.Value.IdentityProviderUrl);
-
-            //if (disco.IsError)
-            //{
-            //    _logger.LogError("disco error Status code: {discoIsError}, Error: {discoError}", disco.IsError, disco.Error);
-            //    throw new ApplicationException($"Status code: {disco.IsError}, Error: {disco.Error}");
-            //}
-
             var oboClient = _httpClientFactory.CreateClient();
             oboClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.IdentityProviderUrl);
 
             // Content-Type: application/x-www-form-urlencoded
-
             var oboTokenExchangeBody = new[]
             {
                 new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer"),
@@ -128,7 +116,7 @@ public class ApiTokenCacheClient
 
         lock (_lock)
         {
-            _cache.SetString(key, System.Text.Json.JsonSerializer.Serialize(accessTokenItem), options);
+            _cache.SetString(key, JsonSerializer.Serialize(accessTokenItem), options);
         }
     }
 
@@ -137,7 +125,7 @@ public class ApiTokenCacheClient
         var item = _cache.GetString(key);
         if (item != null)
         {
-            return System.Text.Json.JsonSerializer.Deserialize<AccessTokenItem>(item);
+            return JsonSerializer.Deserialize<AccessTokenItem>(item);
         }
 
         return null;

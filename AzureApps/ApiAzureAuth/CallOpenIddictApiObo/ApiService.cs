@@ -28,7 +28,7 @@ public class ApiService
 
             client.BaseAddress = new Uri(_downstreamApi.Value.ApiBaseAddress);
 
-            var access_token = await _apiTokenClient.GetApiToken(
+            var access_token = await _apiTokenClient.GetApiTokenObo(
                 _downstreamApi.Value.ClientId,
                 _downstreamApi.Value.ScopeForAccessToken,
                 _downstreamApi.Value.ClientSecret,
