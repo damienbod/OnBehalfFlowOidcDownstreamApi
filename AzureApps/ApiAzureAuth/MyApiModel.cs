@@ -1,8 +1,8 @@
 using System;
 
-namespace UserApiOne;
+namespace ApiAzureAuth;
 
-public class WeatherForecast
+public class MyApiModel
 {
     public DateTime Date { get; set; }
 

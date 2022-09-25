@@ -12,12 +12,12 @@ using WebAppUserApis;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddTransient<UserApiOneService>();
+builder.Services.AddTransient<AzureMyApiService>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddOptions();
 
-string[]? initialScopes = builder.Configuration.GetValue<string>("UserApiOne:ScopeForAccessToken")?.Split(' ');
+string[]? initialScopes = builder.Configuration.GetValue<string>("MyApi:ScopeForAccessToken")?.Split(' ');
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "AzureAd", subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: true)

@@ -1,23 +1,20 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using UserApiOne;
+using ApiAzureAuth;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddTransient<UserApiTwoService>();
+builder.Services.AddTransient<OboService>();
 builder.Services.AddHttpClient();
 builder.Services.AddOptions();
 
@@ -50,9 +47,9 @@ builder.Services.AddSwaggerGen(c =>
 
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "User API One",
+        Title = "Azure APP",
         Version = "v1",
-        Description = "User API One",
+        Description = "Azure API",
         Contact = new OpenApiContact
         {
             Name = "damienbod",

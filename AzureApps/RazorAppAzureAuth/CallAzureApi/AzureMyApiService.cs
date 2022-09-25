@@ -1,21 +1,20 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Web;
+using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace UserApiOne;
+namespace WebAppUserApis;
 
-public class UserApiTwoService
+public class AzureMyApiService
 {
     private readonly IHttpClientFactory _clientFactory;
     private readonly ITokenAcquisition _tokenAcquisition;
     private readonly IConfiguration _configuration;
 
-    public UserApiTwoService(IHttpClientFactory clientFactory, 
+    public AzureMyApiService(IHttpClientFactory clientFactory, 
         ITokenAcquisition tokenAcquisition, 
         IConfiguration configuration)
     {
@@ -24,23 +23,23 @@ public class UserApiTwoService
         _configuration = configuration;
     }
 
-    public async Task<List<WeatherForecast>?> GetApiDataAsync()
+    public async Task<JArray> GetApiDataAsync()
     {
+
         var client = _clientFactory.CreateClient();
 
-        // user_impersonation access_as_user access_as_application .default
-        var scope = _configuration["UserApiTwo:ScopeForAccessToken"];
+        var scope = _configuration["MyApi:ScopeForAccessToken"];
         var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] { scope });
 
-        client.BaseAddress = new Uri(_configuration["UserApiTwo:ApiBaseAddress"]);
+        client.BaseAddress = new Uri(_configuration["MyApi:ApiBaseAddress"]);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.GetAsync("weatherforecast");
+        var response = await client.GetAsync("myapi");
         if (response.IsSuccessStatusCode)
         {
-            var data = await JsonSerializer.DeserializeAsync<List<WeatherForecast>?>(
-                await response.Content.ReadAsStreamAsync());
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var data = JArray.Parse(responseContent);
 
             return data;
         }
