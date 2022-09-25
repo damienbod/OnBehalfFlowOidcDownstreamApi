@@ -18,9 +18,7 @@ public class Startup
     {
         services.AddAuthentication(options =>
         {
-            options.DefaultScheme = "UNKNOWN";
-            options.DefaultChallengeScheme = "UNKNOWN";
-
+            options.DefaultScheme = Consts.MY_AAD_SCHEME;
         })
         .AddJwtBearer(Consts.MY_AAD_SCHEME, jwtOptions =>
         {
@@ -36,7 +34,6 @@ public class Startup
                 ValidIssuers = Configuration.GetSection("ValidIssuers").Get<string[]>()
             };
         });
-
 
         services.AddSingleton<IAuthorizationHandler, AadApiHandler>();
 
