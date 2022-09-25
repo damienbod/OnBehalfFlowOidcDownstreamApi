@@ -117,18 +117,19 @@ public class Startup
             {
                 // Enable the authorization, logout, token and userinfo endpoints.
                 options.SetAuthorizationEndpointUris("/connect/authorize")
-                          .SetLogoutEndpointUris("/connect/logout")
-                          .SetIntrospectionEndpointUris("/connect/introspect")
-                          .SetTokenEndpointUris("/connect/token")
-                          .SetUserinfoEndpointUris("/connect/userinfo")
-                          .SetVerificationEndpointUris("/connect/verify");
+                    .SetLogoutEndpointUris("/connect/logout")
+                    .SetIntrospectionEndpointUris("/connect/introspect")
+                    .SetTokenEndpointUris("/connect/token")
+                    .SetUserinfoEndpointUris("/connect/userinfo")
+                    .SetVerificationEndpointUris("/connect/verify");
 
                 // Note: this sample uses the code, device code, password and refresh token flows, but you
                 // can enable the other flows if you need to support implicit or client credentials.
                 options.AllowAuthorizationCodeFlow()
-                       .AllowClientCredentialsFlow()
-                       .AllowHybridFlow()
-                       .AllowRefreshTokenFlow();
+                    .AllowCustomFlow("urn:ietf:params:oauth:grant-type:jwt-bearer")
+                    .AllowClientCredentialsFlow()
+                    .AllowHybridFlow()
+                    .AllowRefreshTokenFlow();
 
                 // Mark the "email", "profile", "roles" and "dataEventRecords" scopes as supported scopes.
                 options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles, "dataEventRecords");
@@ -142,11 +143,11 @@ public class Startup
 
                 // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
                 options.UseAspNetCore()
-                       .EnableAuthorizationEndpointPassthrough()
-                       .EnableLogoutEndpointPassthrough()
-                       .EnableTokenEndpointPassthrough()
-                       .EnableUserinfoEndpointPassthrough()
-                       .EnableStatusCodePagesIntegration();
+                    .EnableAuthorizationEndpointPassthrough()
+                    .EnableLogoutEndpointPassthrough()
+                    .EnableTokenEndpointPassthrough()
+                    .EnableUserinfoEndpointPassthrough()
+                    .EnableStatusCodePagesIntegration();
             })
 
             // Register the OpenIddict validation components.
