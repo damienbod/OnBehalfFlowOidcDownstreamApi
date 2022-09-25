@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Identity.Web;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace WebAppUserApis.Pages;
@@ -10,7 +11,7 @@ public class CallApiModel : PageModel
 {
     private readonly AzureMyApiService _apiService;
 
-    public JArray? DataFromApi { get; set; }
+    public List<string>? DataFromApi { get; set; }
 
     public CallApiModel(AzureMyApiService apiService)
     {
