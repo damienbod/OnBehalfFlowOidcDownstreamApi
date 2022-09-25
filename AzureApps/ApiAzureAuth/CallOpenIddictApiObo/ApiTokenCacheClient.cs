@@ -1,17 +1,14 @@
-﻿using Azure.Core;
-using IdentityModel.Client;
+﻿using IdentityModel.Client;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
-using System.Text.Json;
-using static IdentityModel.OidcConstants;
 
 namespace ApiAzureAuth;
 
 public class ApiTokenCacheClient
 {
     private readonly ILogger<ApiTokenCacheClient> _logger;
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly IOptions<DownstreamApi> _downstreamApiConfigurations;
 
     private static readonly object _lock = new();
@@ -32,7 +29,7 @@ public class ApiTokenCacheClient
         IDistributedCache cache)
     {
         _downstreamApiConfigurations = downstreamApiConfigurations;
-        _httpClient = httpClientFactory.CreateClient();
+        _httpClientFactory = httpClientFactory;
         _logger = loggerFactory.CreateLogger<ApiTokenCacheClient>();
         _cache = cache;
     }
@@ -69,8 +66,9 @@ public class ApiTokenCacheClient
         try
         {
 
+            var httpClient =  _httpClientFactory.CreateClient();
             var disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
-                _httpClient, _downstreamApiConfigurations.Value.IdentityProviderUrl);
+                httpClient, _downstreamApiConfigurations.Value.IdentityProviderUrl);
 
 
             if (disco.IsError)
@@ -79,7 +77,8 @@ public class ApiTokenCacheClient
                 throw new ApplicationException($"Status code: {disco.IsError}, Error: {disco.Error}");
             }
 
-            _httpClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.ApiBaseAddress);
+            var oboClient = _httpClientFactory.CreateClient();
+            oboClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.ApiBaseAddress);
 
             // Content-Type: application/x-www-form-urlencoded
 
@@ -93,7 +92,7 @@ public class ApiTokenCacheClient
                 new KeyValuePair<string, string>("requested_token_use", "on_behalf_of"),
             };
             
-            var response = await _httpClient.PostAsync(disco.TokenEndpoint, new FormUrlEncodedContent(oboTokenExchangeBody));
+            var response = await oboClient.PostAsync(disco.TokenEndpoint, new FormUrlEncodedContent(oboTokenExchangeBody));
 
             if (response.IsSuccessStatusCode)
             {
