@@ -79,7 +79,7 @@ if (!app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "User API Two");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Azure API");
     c.RoutePrefix = string.Empty;
 });
 
