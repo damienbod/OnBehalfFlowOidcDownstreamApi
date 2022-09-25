@@ -20,13 +20,18 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddTransient<OboService>();
+        services.AddTransient<ApiService>();
+        services.AddTransient<ApiTokenCacheClient>();
         services.AddHttpClient();
+        services.Configure<DownstreamApi>(Configuration.GetSection("DownstreamApi"));
+
         services.AddOptions();
+
+        services.AddDistributedMemoryCache();
 
         services.AddMicrosoftIdentityWebApiAuthentication(Configuration, "AzureAd")
             .EnableTokenAcquisitionToCallDownstreamApi()
-            .AddInMemoryTokenCaches();
+            .AddDistributedTokenCaches();
 
         services.AddSwaggerGen(c =>
         {

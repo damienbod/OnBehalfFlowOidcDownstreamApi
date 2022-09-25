@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.Resource;
+using Microsoft.Net.Http.Headers;
 
 namespace ApiAzureAuth.Controllers
 {
@@ -11,35 +12,27 @@ namespace ApiAzureAuth.Controllers
     [Route("[controller]")]
     public class MyApiController : ControllerBase
     {
-        private readonly OboService _apiService;
+        private readonly ApiService _apiService;
 
-        public List<MyApiModel>? DataFromApi { get; set; }
+        public List<string>? DataFromDownstreamApi { get; set; }
 
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        public MyApiController(OboService apiService)
+        public MyApiController(ApiService apiService)
         {
             _apiService = apiService;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<MyApiModel>?> Get()
+        public async Task<IEnumerable<string>?> Get()
         {
             var scopeRequiredByApi = new string[] { "access_as_user" };
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
-            //DataFromApi = await _apiService.GetApiDataAsync();
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new MyApiModel
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            var aadBearerToken = Request.Headers[HeaderNames.Authorization]
+                .ToString().Replace("Bearer ", "");
+
+            // DataFromDownstreamApi = await _apiService.GetApiDataAsync(aadBearerToken);
+            //return DataFromDownstreamApi;
+            return new List<string> {"test data"};
         }
     }
 }
