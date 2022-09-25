@@ -6,16 +6,16 @@ namespace ApiAzureAuth;
 
 public class ApiService
 {
-    private readonly IOptions<DownstreamApi> _authConfigurations;
+    private readonly IOptions<DownstreamApi> _downstreamApi;
     private readonly IHttpClientFactory _clientFactory;
     private readonly ApiTokenCacheClient _apiTokenClient;
 
     public ApiService(
-        IOptions<DownstreamApi> authConfigurations, 
+        IOptions<DownstreamApi> downstreamApi, 
         IHttpClientFactory clientFactory,
         ApiTokenCacheClient apiTokenClient)
     {
-        _authConfigurations = authConfigurations;
+        _downstreamApi = downstreamApi;
         _clientFactory = clientFactory;
         _apiTokenClient = apiTokenClient;
     }
@@ -26,12 +26,13 @@ public class ApiService
         {
             var client = _clientFactory.CreateClient();
 
-            client.BaseAddress = new Uri(_authConfigurations.Value.ApiBaseAddress);
+            client.BaseAddress = new Uri(_downstreamApi.Value.ApiBaseAddress);
 
             var access_token = await _apiTokenClient.GetApiToken(
-                "CC_FOR_API",
-                "scope_used_for_api_in_protected_zone",
-                "cc_for_api_secret"
+                _downstreamApi.Value.ClientId,
+                _downstreamApi.Value.ScopeForAccessToken,
+                _downstreamApi.Value.ClientSecret,
+                aadAccessToken
             );
 
             client.SetBearerToken(access_token);

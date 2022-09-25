@@ -33,9 +33,10 @@ public class ApiTokenCacheClient
         _cache = cache;
     }
 
-    public async Task<string> GetApiToken(string api_name, string api_scope, string secret)
+    public async Task<string> GetApiToken(string clientId, 
+        string scope, string clientSecret, string aadAccessToken)
     {
-        var accessToken = GetFromCache(api_name);
+        var accessToken = GetFromCache(clientId);
 
         if (accessToken != null)
         {
@@ -49,43 +50,23 @@ public class ApiTokenCacheClient
             }
         }
 
-        _logger.LogDebug("GetApiToken new from STS for {api_name}", api_name);
+        _logger.LogDebug("GetApiToken new from STS for {api_name}", clientId);
 
         // add
-        var newAccessToken = await GetInternalApiToken( api_name,  api_scope,  secret);
-        AddToCache(api_name, newAccessToken);
+        var newAccessToken = await GetApiTokenOboAad( clientId,  scope,  clientSecret, aadAccessToken);
+        AddToCache(clientId, newAccessToken);
 
         return newAccessToken.AccessToken;
     }
 
-    private async Task<AccessTokenItem> GetInternalApiToken(string api_name, string api_scope, string secret)
+    private async Task<AccessTokenItem> GetApiTokenOboAad(string clientId, 
+        string scope, string clientSecret, string aadAccessToken)
     {
         try
         {
-            var disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
-                _httpClient, _downstreamApiConfigurations.Value.IdentityProviderUrl);
+            
 
-            if (disco.IsError)
-            {
-                _logger.LogError("disco error Status code: {discoIsError}, Error: {discoError}", disco.IsError, disco.Error);
-                throw new ApplicationException($"Status code: {disco.IsError}, Error: {disco.Error}");
-            }
-
-            // TODO
-            var tokenResponse = await HttpClientTokenRequestExtensions
-                .RequestTokenExchangeTokenAsync(_httpClient, new TokenExchangeTokenRequest
-            {
-                Scope = api_scope,
-                ClientSecret = secret,
-                Address = disco.TokenEndpoint,
-                ClientId = api_name, 
-            });
-
-            if (tokenResponse.IsError)
-            {
-                _logger.LogError("tokenResponse.IsError Status code: {tokenResponseIsError}, Error: {tokenResponseError}", tokenResponse.IsError, tokenResponse.Error);
-                throw new ApplicationException($"Status code: {tokenResponse.IsError}, Error: {tokenResponse.Error}");
-            }
+            // TODO OBO flow
 
             return new AccessTokenItem
             {

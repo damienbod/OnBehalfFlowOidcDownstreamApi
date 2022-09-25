@@ -14,8 +14,6 @@ namespace ApiAzureAuth.Controllers
     {
         private readonly ApiService _apiService;
 
-        public List<string>? DataFromDownstreamApi { get; set; }
-
         public MyApiController(ApiService apiService)
         {
             _apiService = apiService;
@@ -30,9 +28,8 @@ namespace ApiAzureAuth.Controllers
             var aadBearerToken = Request.Headers[HeaderNames.Authorization]
                 .ToString().Replace("Bearer ", "");
 
-            // DataFromDownstreamApi = await _apiService.GetApiDataAsync(aadBearerToken);
-            //return DataFromDownstreamApi;
-            return new List<string> {"test data"};
+            var dataFromDownstreamApi = await _apiService.GetApiDataAsync(aadBearerToken);
+            return dataFromDownstreamApi;
         }
     }
 }
