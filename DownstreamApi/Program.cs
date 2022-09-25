@@ -38,7 +38,7 @@ public class Program
                 .ReadFrom.Configuration(hostingContext.Configuration)
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
-                .WriteTo.File("../_logs-WebApi.txt")
+                .WriteTo.File("../_logs-downstream-api.txt")
                 .WriteTo.Console(theme: AnsiConsoleTheme.Code)
             )
             .ConfigureWebHostDefaults(webBuilder =>
