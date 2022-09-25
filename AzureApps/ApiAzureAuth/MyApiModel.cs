@@ -1,5 +1,3 @@
-using System;
-
 namespace ApiAzureAuth;
 
 public class MyApiModel
