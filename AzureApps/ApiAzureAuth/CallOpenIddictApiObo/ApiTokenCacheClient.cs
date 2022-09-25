@@ -99,11 +99,11 @@ public class ApiTokenCacheClient
 
                 if (data != null)
                 {
-                    //return new AccessTokenItem
-                    //{
-                    //    ExpiresIn = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn),
-                    //    AccessToken = tokenResponse.AccessToken
-                    //};
+                    return new AccessTokenItem
+                    {
+                        ExpiresIn = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn),
+                        AccessToken = tokenResponse.AccessToken
+                    };
                 }
             }
 
