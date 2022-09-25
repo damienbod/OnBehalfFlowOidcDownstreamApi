@@ -71,6 +71,7 @@ namespace IdentityProvider.Controllers
                 Issuer = "https://localhost:44318/",
                 Audience = "rs_dataEventRecordsApi",
                 SigningCredentials = signingCredentials,
+                TokenType = "at+jwt"
             };
 
             if (tokenDescriptor.AdditionalHeaderClaims == null)
@@ -82,6 +83,8 @@ namespace IdentityProvider.Controllers
             {
                 tokenDescriptor.AdditionalHeaderClaims.Add("alg", alg);
             }
+
+
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
