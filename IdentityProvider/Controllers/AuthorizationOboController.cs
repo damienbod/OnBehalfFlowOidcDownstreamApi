@@ -36,10 +36,11 @@ namespace IdentityProvider.Controllers
             var accessToken = await GenerateJwtTokenAsync(
                 "alice@alice.com", "newSubsssssuuuubbb");
 
-            return Ok(new OboResponse
+            return Ok(new OboSuccessResponse
             {
                 ExpiresIn = 60 * 60,
-                AccessToken = accessToken
+                AccessToken = accessToken,
+                Scope = oboPayload.Scope
             });
         }
 
@@ -113,11 +114,15 @@ namespace IdentityProvider.Controllers
         public string RequestedTokenUse { get; set; }
     }
 
-    public class OboResponse
+    public class OboSuccessResponse
     {
-        [JsonPropertyName("expiresIn")]
+        [JsonPropertyName("expires_in")]
         public int ExpiresIn { get; set; }
         [JsonPropertyName("accessToken")]
         public string AccessToken { get; set; } = string.Empty;
+        [JsonPropertyName("token_type")]
+        public string TokenType { get; set; } = "Bearer";
+        [JsonPropertyName("scope")]
+        public string Scope { get; set; } = string.Empty;
     }
 }

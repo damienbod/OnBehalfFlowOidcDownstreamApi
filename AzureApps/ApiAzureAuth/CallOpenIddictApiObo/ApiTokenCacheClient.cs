@@ -83,7 +83,7 @@ public class ApiTokenCacheClient
 
             if (response.IsSuccessStatusCode)
             {
-                var tokenResponse = await JsonSerializer.DeserializeAsync<OboResponse>(
+                var tokenResponse = await JsonSerializer.DeserializeAsync<OboSuccessResponse>(
                 await response.Content.ReadAsStreamAsync());
 
                 if (tokenResponse != null)
@@ -132,10 +132,14 @@ public class ApiTokenCacheClient
     }
 }
 
-public class OboResponse
+public class OboSuccessResponse
 {
-    [JsonPropertyName("expiresIn")]
+    [JsonPropertyName("expires_in")]
     public int ExpiresIn { get; set; }
     [JsonPropertyName("accessToken")]
     public string AccessToken { get; set; } = string.Empty;
+    [JsonPropertyName("token_type")]
+    public string TokenType { get; set; } = "Bearer";
+    [JsonPropertyName("scope")]
+    public string Scope { get; set; } = string.Empty;
 }
