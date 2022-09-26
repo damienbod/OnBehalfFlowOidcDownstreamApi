@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
-namespace OnBehalfFlowIntegration
+namespace OnBehalfFlowIntegration.Server
 {
-    public class CreateAccessTokenPayloadModel
+    public class CreateDelegatedAccessTokenPayloadModel
     {
         public string UserName { get; set; } = string.Empty;
         public string Sub { get; set; } = string.Empty;

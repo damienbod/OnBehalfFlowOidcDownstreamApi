@@ -2,11 +2,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace OnBehalfFlowIntegration
+namespace OnBehalfFlowIntegration.Server
 {
-    public static class CreateAccessTokenPayload
+    public static class CreateDelegatedAccessTokenPayload
     {
-        public static string GenerateJwtTokenAsync(CreateAccessTokenPayloadModel payload)
+        public static string GenerateJwtTokenAsync(CreateDelegatedAccessTokenPayloadModel payload)
         {
             SigningCredentials signingCredentials = new X509SigningCredentials(payload.SigningCredentials);
 

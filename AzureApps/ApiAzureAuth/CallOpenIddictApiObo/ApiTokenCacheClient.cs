@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using OnBehalfFlowIntegration;
+using OnBehalfFlowIntegration.Client;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -66,37 +67,30 @@ public class ApiTokenCacheClient
     {
         try
         {
-            var oboClient = _httpClientFactory.CreateClient();
-            oboClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.IdentityProviderUrl);
+            var oboHttpClient = _httpClientFactory.CreateClient();
+            oboHttpClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.IdentityProviderUrl);
 
-            // Content-Type: application/x-www-form-urlencoded
-            var oboTokenExchangeBody = new[]
-            {
-                new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer"),
-                new KeyValuePair<string, string>("client_id", clientId),
-                new KeyValuePair<string, string>("client_secret", clientSecret),
-                new KeyValuePair<string, string>("assertion", aadAccessToken),
-                new KeyValuePair<string, string>("scope", scope),
-                new KeyValuePair<string, string>("requested_token_use", "on_behalf_of"),
-            };
-            
-            var response = await oboClient.PostAsync("/connect/obotoken", new FormUrlEncodedContent(oboTokenExchangeBody));
-
-            if (response.IsSuccessStatusCode)
-            {
-                var tokenResponse = await JsonSerializer.DeserializeAsync<OboSuccessResponse>(
-                await response.Content.ReadAsStreamAsync());
-
-                if (tokenResponse != null)
+            var oboSuccessResponse = await RequestDelegatedAccessToken.GetDelegatedApiTokenObo(
+                new GetDelegatedApiTokenOboModel
                 {
-                    return new AccessTokenItem
-                    {
-                        ExpiresIn = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn),
-                        AccessToken = tokenResponse.AccessToken
-                    };
-                }
+                    Scope = scope,
+                    AccessToken = aadAccessToken,
+                    ClientSecret = clientSecret,
+                    ClientId = clientId,
+                    EndpointUrl = "/connect/obotoken",
+                    OboHttpClient = oboHttpClient
+                });
+
+            if (oboSuccessResponse != null)
+            {
+                return new AccessTokenItem
+                {
+                    ExpiresIn = DateTime.UtcNow.AddSeconds(oboSuccessResponse.ExpiresIn),
+                    AccessToken = oboSuccessResponse.AccessToken
+                };
             }
 
+            // TODO add exception handling and error response flow
             return new AccessTokenItem
             {
                 ExpiresIn = DateTime.UtcNow,// DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn),

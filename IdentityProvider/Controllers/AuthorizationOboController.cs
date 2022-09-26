@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using OnBehalfFlowIntegration;
+using OnBehalfFlowIntegration.Server;
 using OpeniddictServer;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -33,8 +34,8 @@ namespace IdentityProvider.Controllers
 
             var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, Configuration);
 
-            var accessToken = CreateAccessTokenPayload.GenerateJwtTokenAsync(
-                new CreateAccessTokenPayloadModel
+            var accessToken = CreateDelegatedAccessTokenPayload.GenerateJwtTokenAsync(
+                new CreateDelegatedAccessTokenPayloadModel
                 {
                     Sub = "newSubsssssuuuubbb",
                     UserName = "alice@alice.com",
