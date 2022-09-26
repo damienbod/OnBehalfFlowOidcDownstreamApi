@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiAzureAuth", "AzureApps\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorAppAzureAuth", "AzureApps\RazorAppAzureAuth\RazorAppAzureAuth.csproj", "{3FC0BB5C-A410-4CD1-BC56-F601901436BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnBehalfFlowIntegration", "OnBehalfFlowIntegration\OnBehalfFlowIntegration.csproj", "{7116F9DA-45B0-41FC-9272-A47EDF6959BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{3FC0BB5C-A410-4CD1-BC56-F601901436BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FC0BB5C-A410-4CD1-BC56-F601901436BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FC0BB5C-A410-4CD1-BC56-F601901436BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7116F9DA-45B0-41FC-9272-A47EDF6959BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7116F9DA-45B0-41FC-9272-A47EDF6959BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7116F9DA-45B0-41FC-9272-A47EDF6959BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7116F9DA-45B0-41FC-9272-A47EDF6959BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

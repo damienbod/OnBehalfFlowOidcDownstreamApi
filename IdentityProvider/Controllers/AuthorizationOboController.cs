@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using OnBehalfFlowIntegration;
 using OpeniddictServer;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text.Json.Serialization;
 
 namespace IdentityProvider.Controllers
 {
@@ -33,8 +31,18 @@ namespace IdentityProvider.Controllers
 
             // use data and return new access token
 
-            var accessToken = await GenerateJwtTokenAsync(
-                "alice@alice.com", "newSubsssssuuuubbb");
+            var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, Configuration);
+
+            var accessToken = CreateAccessTokenPayload.GenerateJwtTokenAsync(
+                new CreateAccessTokenPayloadModel
+                {
+                    Sub = "newSubsssssuuuubbb",
+                    UserName = "alice@alice.com",
+                    SigningCredentials = ActiveCertificate,
+                    Scope = "dataEventRecords",
+                    Audience = "rs_dataEventRecordsApi",
+                    Issuer = "https://localhost:44318/",
+                });
 
             return Ok(new OboSuccessResponse
             {
@@ -43,88 +51,5 @@ namespace IdentityProvider.Controllers
                 Scope = oboPayload.Scope
             });
         }
-
-        private async Task<string> GenerateJwtTokenAsync(string username, string sub)
-        {
-            var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, Configuration);
-
-            SigningCredentials signingCredentials = new X509SigningCredentials(ActiveCertificate);
-
-            var alg = signingCredentials.Algorithm;
-
-            //{
-            //  "alg": "RS256",
-            //  "kid": "....",
-            //  "typ": "at+jwt",
-            //}
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                // TODO add claims as required if authorized
-                Subject = new ClaimsIdentity(new[] {
-                    new Claim("sub", sub),
-                    new Claim("username", username) ,
-                    new Claim("scope", "dataEventRecords")
-                }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                IssuedAt = DateTime.UtcNow,
-                Issuer = "https://localhost:44318/",
-                Audience = "rs_dataEventRecordsApi",
-                SigningCredentials = signingCredentials,
-                TokenType = "at+jwt"
-            };
-
-            if (tokenDescriptor.AdditionalHeaderClaims == null)
-            {
-                tokenDescriptor.AdditionalHeaderClaims = new Dictionary<string, object>();
-            }
-
-            if (!tokenDescriptor.AdditionalHeaderClaims.ContainsKey("alg"))
-            {
-                tokenDescriptor.AdditionalHeaderClaims.Add("alg", alg);
-            }
-
-
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
-        }
-    }
-
-    public class OboPayload
-    {
-        [JsonPropertyName("expiresIn")]
-        public string GrantType {get;set;}
-
-        [JsonPropertyName("client_id")]
-        public string ClientId { get; set; }
-
-        [JsonPropertyName("client_secret")]
-        public string ClientSecret { get; set; }
-
-        [JsonPropertyName("assertion")]
-        public string Assertion { get; set; }
-
-        [JsonPropertyName("scope")]
-        public string Scope { get; set; }
-
-        [JsonPropertyName("requested_token_use")]
-        public string RequestedTokenUse { get; set; }
-    }
-
-    public class OboSuccessResponse
-    {
-        [JsonPropertyName("expires_in")]
-        public int ExpiresIn { get; set; }
-        [JsonPropertyName("access_token")]
-        public string AccessToken { get; set; } = string.Empty;
-        [JsonPropertyName("token_type")]
-        public string TokenType { get; set; } = "Bearer";
-        //[JsonPropertyName("issued_token_type")]
-        //public string IssuedTokenType { get; set; } = "urn:ietf:params:oauth:token-type:access_token";
-        [JsonPropertyName("scope")]
-        public string Scope { get; set; } = string.Empty;
     }
 }
