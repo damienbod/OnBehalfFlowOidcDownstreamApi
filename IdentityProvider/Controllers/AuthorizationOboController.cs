@@ -51,6 +51,8 @@ namespace IdentityProvider.Controllers
                 return Unauthorized(accessTokenValidationResult.Reason);
             }
 
+            var claimsPrincipal = accessTokenValidationResult.ClaimsPrincipal;
+
             // use data and return new access token
             var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, _configuration);
 
@@ -58,7 +60,9 @@ namespace IdentityProvider.Controllers
                 new CreateDelegatedAccessTokenPayloadModel
                 {
                     Sub = Guid.NewGuid().ToString(),
-                    UserName = "alice@alice.com",
+                    UserName = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal),
+                    Azp = ValidateOboRequestPayload.GetAzp(claimsPrincipal),
+                    Azpacr = ValidateOboRequestPayload.GetAzpacr(claimsPrincipal),
                     SigningCredentials = ActiveCertificate,
                     Scope = _oboConfiguration.ScopeForNewAccessToken,
                     Audience = _oboConfiguration.AudienceForNewAccessToken,

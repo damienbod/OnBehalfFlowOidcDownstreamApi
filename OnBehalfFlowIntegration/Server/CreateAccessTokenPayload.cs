@@ -25,7 +25,9 @@ public static class CreateDelegatedAccessTokenPayload
             Subject = new ClaimsIdentity(new[] {
                 new Claim("sub", payload.Sub),
                 new Claim("username", payload.UserName) ,
-                new Claim("scope", payload.Scope)
+                new Claim("scope", payload.Scope),
+                new Claim("azp", payload.Azp),
+                new Claim("azpacr", payload.Azpacr)
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             IssuedAt = DateTime.UtcNow,

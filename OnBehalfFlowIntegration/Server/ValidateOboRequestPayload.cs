@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -66,5 +65,41 @@ public static class ValidateOboRequestPayload
         {
             return (false, $"Access Token Authorization failed {ex.Message}", null);
         }
+    }
+
+    public static string GetPreferredUserName(ClaimsPrincipal claimsPrincipal)
+    {
+        string preferredUsername = string.Empty;
+        var preferred_username = claimsPrincipal.Claims.FirstOrDefault(t => t.Type == "preferred_username");
+        if (preferred_username != null)
+        {
+            preferredUsername = preferred_username.Value;
+        }
+
+        return preferredUsername;
+    }
+
+    public static string GetAzpacr(ClaimsPrincipal claimsPrincipal)
+    {
+        string azpacr = string.Empty;
+        var azpacrClaim = claimsPrincipal.Claims.FirstOrDefault(t => t.Type == "azpacr");
+        if (azpacrClaim != null)
+        {
+            azpacr = azpacrClaim.Value;
+        }
+
+        return azpacr;
+    }
+
+    public static string GetAzp(ClaimsPrincipal claimsPrincipal)
+    {
+        string azp = string.Empty;
+        var azpClaim = claimsPrincipal.Claims.FirstOrDefault(t => t.Type == "azp");
+        if (azpClaim != null)
+        {
+            azp = azpClaim.Value;
+        }
+
+        return azp;
     }
 }
