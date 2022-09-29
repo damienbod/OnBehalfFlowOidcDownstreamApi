@@ -42,7 +42,7 @@ namespace IdentityProvider.Controllers
             var wellKnownEndpoints =  await configurationManager.GetConfigurationAsync();
 
             var accessTokenValidationResult = ValidateOboRequestPayload.ValidateTokenSignature(
-                oboPayload.Assertion,
+                oboPayload.assertion,
                 _oboConfiguration,
                 wellKnownEndpoints.SigningKeys);
             
@@ -69,7 +69,7 @@ namespace IdentityProvider.Controllers
             {
                 ExpiresIn = 60 * 60,
                 AccessToken = accessToken,
-                Scope = oboPayload.Scope
+                Scope = oboPayload.scope
             });
         }
     }

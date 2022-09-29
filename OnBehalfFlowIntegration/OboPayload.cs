@@ -5,20 +5,20 @@ namespace OnBehalfFlowIntegration;
 public class OboPayload
 {
     [JsonPropertyName("grant_type")]
-    public string GrantType {get;set;} = string.Empty;
+    public string grant_type {get;set;} = string.Empty;
 
     [JsonPropertyName("client_id")]
-    public string ClientId { get; set; } = string.Empty;
+    public string client_id { get; set; } = string.Empty;
 
     [JsonPropertyName("client_secret")]
-    public string ClientSecret { get; set; } = string.Empty;
+    public string client_secret { get; set; } = string.Empty;
 
     [JsonPropertyName("assertion")]
-    public string Assertion { get; set; } = string.Empty;
+    public string assertion { get; set; } = string.Empty;
 
     [JsonPropertyName("scope")]
-    public string Scope { get; set; } = string.Empty;
+    public string scope { get; set; } = string.Empty;
 
     [JsonPropertyName("requested_token_use")]
-    public string RequestedTokenUse { get; set; } = string.Empty;
+    public string requested_token_use { get; set; } = string.Empty;
 }

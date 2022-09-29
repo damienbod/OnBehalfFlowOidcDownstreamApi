@@ -9,27 +9,27 @@ public static class ValidateOboRequestPayload
 {
     public static (bool Valid, string Reason) IsValid(OboPayload oboPayload, OboConfiguration oboConfiguration)
     {
-        if(!oboPayload.RequestedTokenUse.ToLower().Equals("on_behalf_of"))
+        if(!oboPayload.requested_token_use.ToLower().Equals("on_behalf_of"))
         {
             return (false, "obo requested_token_use parameter has an incorrect value, expected on_behalf_of");
         };
 
-        if (!oboPayload.GrantType.ToLower().Equals("urn:ietf:params:oauth:grant-type:jwt-bearer"))
+        if (!oboPayload.grant_type.ToLower().Equals("urn:ietf:params:oauth:grant-type:jwt-bearer"))
         {
             return (false, "obo grant_type parameter has an incorrect value, expected urn:ietf:params:oauth:grant-type:jwt-bearer");
         };
 
-        if (!oboPayload.ClientId.Equals(oboConfiguration.ClientId))
+        if (!oboPayload.client_id.Equals(oboConfiguration.ClientId))
         {
             return (false, "obo client_id parameter has an incorrect value");
         };
 
-        if (!oboPayload.ClientSecret.Equals(OboExtentions.ToSha256(oboConfiguration.ClientSecret)))
+        if (!oboPayload.client_secret.Equals(OboExtentions.ToSha256(oboConfiguration.ClientSecret)))
         {
             return (false, "obo client secret parameter has an incorrect value");
         };
 
-        if (!oboPayload.Scope.ToLower().Equals(oboConfiguration.ScopeForNewAccessToken.ToLower()))
+        if (!oboPayload.scope.ToLower().Equals(oboConfiguration.ScopeForNewAccessToken.ToLower()))
         {
             return (false, "obo scope parameter has an incorrect value");
         };
