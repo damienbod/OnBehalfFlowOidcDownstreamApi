@@ -8,13 +8,13 @@ using Fido2Identity;
 using Fido2NetLib;
 using StsServerIdentity.Services.Certificate;
 using System.Security.Cryptography.X509Certificates;
-using ApiAzureAuth;
+using OnBehalfFlowIntegration.Server;
 
 namespace OpeniddictServer;
 
 public class Startup
 {
-    private IWebHostEnvironment _environment { get; }
+    private readonly IWebHostEnvironment _environment;
     public IConfiguration Configuration { get; }
 
     public Startup(IConfiguration configuration, IWebHostEnvironment env)
@@ -107,7 +107,7 @@ public class Startup
         // Register the Quartz.NET service and configure it to block shutdown until jobs are complete.
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
-        var x509Certificate2Certs = GetCertificates(_environment, Configuration)
+        var (ActiveCertificate, SecondaryCertificate) = GetCertificates(_environment, Configuration)
             .GetAwaiter().GetResult();
 
         services.AddOpenIddict()
@@ -151,7 +151,7 @@ public class Startup
 
                 // Register the signing and encryption credentials.
                 options.AddDevelopmentEncryptionCertificate()
-                       .AddSigningCertificate(x509Certificate2Certs.ActiveCertificate);
+                       .AddSigningCertificate(ActiveCertificate);
 
                 // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
                 options.UseAspNetCore()
