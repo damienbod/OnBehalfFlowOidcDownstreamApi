@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Tokens;
 using OnBehalfFlowIntegration;
 using OnBehalfFlowIntegration.Server;
 using OpeniddictServer;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using Microsoft.Extensions.Options;
 
 namespace IdentityProvider.Controllers
 {
@@ -18,11 +16,11 @@ namespace IdentityProvider.Controllers
         private readonly OboConfiguration _oboConfiguration;
 
         public AuthorizationOboController(IConfiguration configuration, 
-            IWebHostEnvironment env, OboConfiguration oboConfiguration)
+            IWebHostEnvironment env, IOptions<OboConfiguration> oboConfiguration)
         {
             _configuration = configuration;
             _environment = env;
-            _oboConfiguration = oboConfiguration;
+            _oboConfiguration = oboConfiguration.Value;
         }
 
         [AllowAnonymous]
