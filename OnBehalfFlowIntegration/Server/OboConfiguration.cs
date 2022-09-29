@@ -1,4 +1,4 @@
-﻿namespace ApiAzureAuth;
+﻿namespace OnBehalfFlowIntegration.Server;
 
 public class OboConfiguration
 {
