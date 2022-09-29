@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Tokens;
 using OnBehalfFlowIntegration;
 using OnBehalfFlowIntegration.Server;
@@ -34,11 +36,24 @@ namespace IdentityProvider.Controllers
                 return Unauthorized(Reason);
             }
 
-            // TODO
             // get claims from aad token and re use in OpenIddict token
+            var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                _oboConfiguration.AccessTokenMetadataAddress, 
+                new OpenIdConnectConfigurationRetriever());
+
+            var wellKnownEndpoints =  await configurationManager.GetConfigurationAsync();
+
+            var accessTokenValidationResult = ValidateOboRequestPayload.ValidateTokenSignature(
+                oboPayload.Assertion,
+                _oboConfiguration,
+                wellKnownEndpoints.SigningKeys);
+            
+            if(!accessTokenValidationResult.Valid)
+            {
+                return Unauthorized(accessTokenValidationResult.Reason);
+            }
 
             // use data and return new access token
-
             var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, _configuration);
 
             var accessToken = CreateDelegatedAccessTokenPayload.GenerateJwtTokenAsync(

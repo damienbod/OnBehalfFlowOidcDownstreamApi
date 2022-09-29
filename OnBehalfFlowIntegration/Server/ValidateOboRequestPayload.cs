@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -51,7 +52,7 @@ public static class ValidateOboRequestPayload
                 IssuerSigningKeys = signingKeys,
                 ValidateIssuer = true,
                 ValidIssuer = oboConfiguration.AccessTokenAuthority,
-                ValidateAudience = true,
+                ValidateAudience = true, 
                 ValidAudience = oboConfiguration.AccessTokenAudience
             };
 
