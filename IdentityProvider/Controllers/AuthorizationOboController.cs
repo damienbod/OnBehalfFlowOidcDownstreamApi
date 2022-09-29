@@ -11,28 +11,35 @@ namespace IdentityProvider.Controllers
 {
     public class AuthorizationOboController : Controller
     {
-        private IWebHostEnvironment _environment { get; }
-        public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
+        private readonly OboConfiguration _oboConfiguration;
 
-        public AuthorizationOboController(IConfiguration configuration, IWebHostEnvironment env)
+        public AuthorizationOboController(IConfiguration configuration, 
+            IWebHostEnvironment env, OboConfiguration oboConfiguration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
             _environment = env;
+            _oboConfiguration = oboConfiguration;
         }
 
         [AllowAnonymous]
         [HttpPost("~/connect/obotoken"), Produces("application/json")]
         public async Task<IActionResult> Exchange([FromForm] OboPayload oboPayload)
         {
-            // TODO validate request body data and AAD token
-            // var validate = oboPayload;
+            var (Valid, Reason) = ValidateOboRequestPayload.IsValid(oboPayload, _oboConfiguration);
+
+            if(!Valid)
+            {
+                return Unauthorized(Reason);
+            }
 
             // TODO
             // get claims from aad token and re use in OpenIddict token
 
             // use data and return new access token
 
-            var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, Configuration);
+            var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, _configuration);
 
             var accessToken = CreateDelegatedAccessTokenPayload.GenerateJwtTokenAsync(
                 new CreateDelegatedAccessTokenPayloadModel
