@@ -44,11 +44,11 @@ namespace IdentityProvider.Controllers
             var accessToken = CreateDelegatedAccessTokenPayload.GenerateJwtTokenAsync(
                 new CreateDelegatedAccessTokenPayloadModel
                 {
-                    Sub = "newSubsssssuuuubbb",
+                    Sub = Guid.NewGuid().ToString(),
                     UserName = "alice@alice.com",
                     SigningCredentials = ActiveCertificate,
-                    Scope = "dataEventRecords",
-                    Audience = "rs_dataEventRecordsApi",
+                    Scope = _oboConfiguration.ScopeForNewAccessToken,
+                    Audience = _oboConfiguration.AudienceForNewAccessToken,
                     Issuer = "https://localhost:44318/",
                 });
 
