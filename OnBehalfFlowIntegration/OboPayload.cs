@@ -4,7 +4,7 @@ namespace OnBehalfFlowIntegration;
 
 public class OboPayload
 {
-    [JsonPropertyName("expiresIn")]
+    [JsonPropertyName("grant_type")]
     public string GrantType {get;set;} = string.Empty;
 
     [JsonPropertyName("client_id")]
