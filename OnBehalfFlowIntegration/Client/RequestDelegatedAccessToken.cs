@@ -13,13 +13,13 @@ public static class RequestDelegatedAccessToken
         // Content-Type: application/x-www-form-urlencoded
         var oboTokenExchangeBody = new[]
         {
-                new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer"),
-                new KeyValuePair<string, string>("client_id", reqData.ClientId),
-                new KeyValuePair<string, string>("client_secret", reqData.ClientSecret),
-                new KeyValuePair<string, string>("assertion", reqData.AccessToken),
-                new KeyValuePair<string, string>("scope", reqData.Scope),
-                new KeyValuePair<string, string>("requested_token_use", "on_behalf_of"),
-            };
+            new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer"),
+            new KeyValuePair<string, string>("client_id", reqData.ClientId),
+            new KeyValuePair<string, string>("client_secret", OboExtentions.ToSha256(reqData.ClientSecret)),
+            new KeyValuePair<string, string>("assertion", reqData.AccessToken),
+            new KeyValuePair<string, string>("scope", reqData.Scope),
+            new KeyValuePair<string, string>("requested_token_use", "on_behalf_of"),
+        };
 
         var response = await reqData.OboHttpClient.PostAsync(reqData.EndpointUrl, new FormUrlEncodedContent(oboTokenExchangeBody));
 
