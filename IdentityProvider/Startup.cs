@@ -8,6 +8,7 @@ using Fido2Identity;
 using Fido2NetLib;
 using StsServerIdentity.Services.Certificate;
 using System.Security.Cryptography.X509Certificates;
+using ApiAzureAuth;
 
 namespace OpeniddictServer;
 
@@ -26,6 +27,8 @@ public class Startup
     {
         services.AddControllersWithViews();
         services.AddRazorPages();
+
+        services.Configure<OboConfiguration>(Configuration.GetSection("OboConfiguration"));
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {
