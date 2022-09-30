@@ -4,7 +4,7 @@ namespace OnBehalfFlowIntegration.Server;
 
 public class CreateDelegatedAccessTokenPayloadModel
 {
-    public string UserName { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public string Azpacr { get; set; } = string.Empty;
     public string Azp { get; set; } = string.Empty;
     public string Sub { get; set; } = string.Empty;

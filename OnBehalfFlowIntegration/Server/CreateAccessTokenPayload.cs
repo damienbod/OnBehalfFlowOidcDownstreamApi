@@ -24,7 +24,7 @@ public static class CreateDelegatedAccessTokenPayload
             // TODO add claims as required if authorized        
             Subject = new ClaimsIdentity(new[] {
                 new Claim("sub", payload.Sub),
-                new Claim("username", payload.UserName) ,
+                new Claim("name", payload.Name) ,
                 new Claim("scope", payload.Scope),
                 new Claim("azp", payload.Azp),
                 new Claim("azpacr", payload.Azpacr),
