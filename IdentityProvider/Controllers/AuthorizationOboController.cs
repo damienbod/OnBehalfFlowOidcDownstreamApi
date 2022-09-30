@@ -103,9 +103,7 @@ namespace IdentityProvider.Controllers
             var tokenData = new CreateDelegatedAccessTokenPayloadModel
             {
                 Sub = Guid.NewGuid().ToString(),
-                Name = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal),
-                Azp = ValidateOboRequestPayload.GetAzp(claimsPrincipal),
-                Azpacr = ValidateOboRequestPayload.GetAzpacr(claimsPrincipal),
+                ClaimsPrincipal = claimsPrincipal,
                 SigningCredentials = ActiveCertificate,
                 Scope = _oboConfiguration.ScopeForNewAccessToken,
                 Audience = _oboConfiguration.AudienceForNewAccessToken,
