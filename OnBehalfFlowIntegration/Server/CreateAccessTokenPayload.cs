@@ -21,14 +21,14 @@ public static class CreateDelegatedAccessTokenPayload
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            // TODO add claims as required if authorized
+            // TODO add claims as required if authorized        
             Subject = new ClaimsIdentity(new[] {
                 new Claim("sub", payload.Sub),
                 new Claim("username", payload.UserName) ,
                 new Claim("scope", payload.Scope),
                 new Claim("azp", payload.Azp),
                 new Claim("azpacr", payload.Azpacr),
-                new Claim("act", payload.OriginalClientId)
+                new Claim("act", $"{{ \"sub\": \"{payload.OriginalClientId}\" }}", "Json" )
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             IssuedAt = DateTime.UtcNow,
