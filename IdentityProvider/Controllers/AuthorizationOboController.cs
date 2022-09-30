@@ -31,7 +31,14 @@ namespace IdentityProvider.Controllers
 
             if(!Valid)
             {
-                return Unauthorized(Reason);
+                return Unauthorized(new OboErrorResponse
+                {
+                    error = "Validation request parameters failed",
+                    error_description = Reason,
+                    timestamp = DateTime.UtcNow,
+                    correlation_id = Guid.NewGuid().ToString(),
+                    trace_id = Guid.NewGuid().ToString(),
+                });
             }
 
             // get claims from aad token and re use in OpenIddict token
@@ -48,7 +55,14 @@ namespace IdentityProvider.Controllers
             
             if(!accessTokenValidationResult.Valid)
             {
-                return Unauthorized(accessTokenValidationResult.Reason);
+                return Unauthorized(new OboErrorResponse
+                {
+                    error = "Validation request parameters failed",
+                    error_description = accessTokenValidationResult.Reason,
+                    timestamp = DateTime.UtcNow,
+                    correlation_id = Guid.NewGuid().ToString(),
+                    trace_id = Guid.NewGuid().ToString(),
+                });
             }
 
             var claimsPrincipal = accessTokenValidationResult.ClaimsPrincipal;
@@ -66,7 +80,7 @@ namespace IdentityProvider.Controllers
                     SigningCredentials = ActiveCertificate,
                     Scope = _oboConfiguration.ScopeForNewAccessToken,
                     Audience = _oboConfiguration.AudienceForNewAccessToken,
-                    Issuer = "https://localhost:44318/",
+                    Issuer = _oboConfiguration.IssuerForNewAccessToken,
                 });
 
             return Ok(new OboSuccessResponse

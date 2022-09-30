@@ -28,7 +28,16 @@ public static class RequestDelegatedAccessToken
             var tokenResponse = await JsonSerializer.DeserializeAsync<OboSuccessResponse>(
             await response.Content.ReadAsStreamAsync());
             return tokenResponse;
-
+        }
+        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            // error
+            var tokenResponse = await JsonSerializer.DeserializeAsync<OboErrorResponse>(
+           await response.Content.ReadAsStreamAsync());
+        }
+        else
+        {
+            // unknown error, log
         }
 
         return null;
