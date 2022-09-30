@@ -1,11 +1,12 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace OnBehalfFlowIntegration.Client;
 
 public static class RequestDelegatedAccessToken
 {
     public static async Task<OboSuccessResponse?> GetDelegatedApiTokenObo(
-        GetDelegatedApiTokenOboModel reqData)
+        GetDelegatedApiTokenOboModel reqData, ILogger logger)
     {
         if (reqData.OboHttpClient == null)
             throw new ArgumentException("Httpclient missing, is null");
@@ -31,13 +32,27 @@ public static class RequestDelegatedAccessToken
         }
         if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
-            // error
-            var tokenResponse = await JsonSerializer.DeserializeAsync<OboErrorResponse>(
+            // Unauthorized error
+            var errorResult = await JsonSerializer.DeserializeAsync<OboErrorResponse>(
            await response.Content.ReadAsStreamAsync());
+
+            if(errorResult != null)
+            {
+                logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
+                    errorResult.error,
+                    errorResult.error_description,
+                    errorResult.correlation_id,
+                    errorResult.trace_id);
+            }
+            else
+            {
+                logger.LogInformation("RequestDelegatedAccessToken Error, Unauthorized unknown reason");
+            }
         }
         else
         {
             // unknown error, log
+            logger.LogInformation("RequestDelegatedAccessToken Error unknown reason");
         }
 
         return null;

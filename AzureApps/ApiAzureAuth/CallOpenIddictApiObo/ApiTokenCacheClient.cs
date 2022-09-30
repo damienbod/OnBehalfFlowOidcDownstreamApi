@@ -77,7 +77,7 @@ public class ApiTokenCacheClient
                     ClientId = clientId,
                     EndpointUrl = "/connect/obotoken",
                     OboHttpClient = oboHttpClient
-                });
+                }, _logger);
 
             if (oboSuccessResponse != null)
             {
