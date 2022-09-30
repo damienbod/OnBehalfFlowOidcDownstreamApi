@@ -14,13 +14,16 @@ namespace IdentityProvider.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
         private readonly OboConfiguration _oboConfiguration;
+        private readonly ILogger<AuthorizationOboController> _logger;
 
         public AuthorizationOboController(IConfiguration configuration, 
-            IWebHostEnvironment env, IOptions<OboConfiguration> oboConfiguration)
+            IWebHostEnvironment env, IOptions<OboConfiguration> oboConfiguration,
+            ILoggerFactory loggerFactory)
         {
             _configuration = configuration;
             _environment = env;
             _oboConfiguration = oboConfiguration.Value;
+            _logger = loggerFactory.CreateLogger<AuthorizationOboController>();
         }
 
         [AllowAnonymous]
@@ -31,14 +34,22 @@ namespace IdentityProvider.Controllers
 
             if(!Valid)
             {
-                return Unauthorized(new OboErrorResponse
+                var errorResult = new OboErrorResponse
                 {
                     error = "Validation request parameters failed",
                     error_description = Reason,
                     timestamp = DateTime.UtcNow,
                     correlation_id = Guid.NewGuid().ToString(),
                     trace_id = Guid.NewGuid().ToString(),
-                });
+                };
+
+                _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}", 
+                    errorResult.error, 
+                    errorResult.error_description,
+                    errorResult.correlation_id,
+                    errorResult.trace_id);
+
+                return Unauthorized(errorResult);
             }
 
             // get claims from aad token and re use in OpenIddict token
@@ -55,14 +66,22 @@ namespace IdentityProvider.Controllers
             
             if(!accessTokenValidationResult.Valid)
             {
-                return Unauthorized(new OboErrorResponse
+                var errorResult = new OboErrorResponse
                 {
                     error = "Validation request parameters failed",
                     error_description = accessTokenValidationResult.Reason,
                     timestamp = DateTime.UtcNow,
                     correlation_id = Guid.NewGuid().ToString(),
                     trace_id = Guid.NewGuid().ToString(),
-                });
+                };
+
+                _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
+                    errorResult.error,
+                    errorResult.error_description,
+                    errorResult.correlation_id,
+                    errorResult.trace_id);
+
+                return Unauthorized(errorResult);
             }
 
             var claimsPrincipal = accessTokenValidationResult.ClaimsPrincipal;
@@ -70,18 +89,23 @@ namespace IdentityProvider.Controllers
             // use data and return new access token
             var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, _configuration);
 
-            var accessToken = CreateDelegatedAccessTokenPayload.GenerateJwtTokenAsync(
-                new CreateDelegatedAccessTokenPayloadModel
-                {
-                    Sub = Guid.NewGuid().ToString(),
-                    UserName = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal),
-                    Azp = ValidateOboRequestPayload.GetAzp(claimsPrincipal),
-                    Azpacr = ValidateOboRequestPayload.GetAzpacr(claimsPrincipal),
-                    SigningCredentials = ActiveCertificate,
-                    Scope = _oboConfiguration.ScopeForNewAccessToken,
-                    Audience = _oboConfiguration.AudienceForNewAccessToken,
-                    Issuer = _oboConfiguration.IssuerForNewAccessToken,
-                });
+            var tokenData = new CreateDelegatedAccessTokenPayloadModel
+            {
+                Sub = Guid.NewGuid().ToString(),
+                UserName = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal),
+                Azp = ValidateOboRequestPayload.GetAzp(claimsPrincipal),
+                Azpacr = ValidateOboRequestPayload.GetAzpacr(claimsPrincipal),
+                SigningCredentials = ActiveCertificate,
+                Scope = _oboConfiguration.ScopeForNewAccessToken,
+                Audience = _oboConfiguration.AudienceForNewAccessToken,
+                Issuer = _oboConfiguration.IssuerForNewAccessToken,
+            };
+
+            var accessToken = CreateDelegatedAccessTokenPayload.GenerateJwtTokenAsync(tokenData);
+
+            _logger.LogDebug("OBO new access token returned {Sub}", tokenData.Sub);
+
+            // Log PII data if active
 
             return Ok(new OboSuccessResponse
             {
