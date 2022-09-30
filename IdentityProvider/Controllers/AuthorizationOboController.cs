@@ -65,7 +65,7 @@ namespace IdentityProvider.Controllers
 
             var wellKnownEndpoints =  await configurationManager.GetConfigurationAsync();
 
-            var accessTokenValidationResult = ValidateOboRequestPayload.ValidateTokenSignature(
+            var accessTokenValidationResult = ValidateOboRequestPayload.ValidateTokenAndSignature(
                 oboPayload.assertion,
                 _oboConfiguration,
                 wellKnownEndpoints.SigningKeys);

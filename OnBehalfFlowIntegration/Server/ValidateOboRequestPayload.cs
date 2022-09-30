@@ -36,8 +36,10 @@ public static class ValidateOboRequestPayload
         return (true, string.Empty);
     }
 
-    public static (bool Valid, string Reason, ClaimsPrincipal? ClaimsPrincipal) 
-            ValidateTokenSignature(string jwtToken, OboConfiguration oboConfiguration, ICollection<SecurityKey> signingKeys)
+    public static (bool Valid, string Reason, ClaimsPrincipal? ClaimsPrincipal) ValidateTokenAndSignature(
+        string jwtToken, 
+        OboConfiguration oboConfiguration, 
+        ICollection<SecurityKey> signingKeys)
     {
         try
         {
