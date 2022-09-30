@@ -52,7 +52,7 @@ namespace IdentityProvider.Controllers
 
                 if (IdentityModelEventSource.ShowPII)
                 {
-                    _logger.LogDebug("OBO new access token returned {Sub} for assertion {assertion}", oboPayload.assertion);
+                    _logger.LogDebug("OBO new access token returned for assertion {assertion}", oboPayload.assertion);
                 }
 
                 return Unauthorized(errorResult);
@@ -83,7 +83,7 @@ namespace IdentityProvider.Controllers
 
                 if (IdentityModelEventSource.ShowPII)
                 {
-                    _logger.LogDebug("OBO new access token returned {Sub} for assertion {assertion}", oboPayload.assertion);
+                    _logger.LogDebug("OBO new access token returned for assertion {assertion}", oboPayload.assertion);
                 }
 
                 _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
@@ -114,11 +114,11 @@ namespace IdentityProvider.Controllers
 
             var accessToken = CreateDelegatedAccessTokenPayload.GenerateJwtTokenAsync(tokenData);
 
-            _logger.LogDebug("OBO new access token returned {Sub}", tokenData.Sub);
+            _logger.LogInformation("OBO new access token returned sub {sub}", tokenData.Sub);
 
             if(IdentityModelEventSource.ShowPII)
             {
-                _logger.LogDebug("OBO new access token returned {Sub} for user {Username}", tokenData.Sub,
+                _logger.LogDebug("OBO new access token returned for sub {sub} for user {Username}", tokenData.Sub,
                     ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal));
             }
 
