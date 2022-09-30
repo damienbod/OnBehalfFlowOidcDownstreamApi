@@ -28,7 +28,7 @@ public static class CreateDelegatedAccessTokenPayload
                 new Claim("scope", payload.Scope),
                 new Claim("azp", payload.Azp),
                 new Claim("azpacr", payload.Azpacr),
-                new Claim("act", $"{{ \"sub\": \"{payload.OriginalClientId}\" }}", "Json" )
+                new Claim("act", $"{{ \"sub\": \"{payload.OriginalClientId}\" }}", JsonClaimValueTypes.Json )
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             IssuedAt = DateTime.UtcNow,
