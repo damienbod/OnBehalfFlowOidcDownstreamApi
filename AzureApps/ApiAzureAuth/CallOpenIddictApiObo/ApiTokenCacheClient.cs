@@ -60,47 +60,34 @@ public class ApiTokenCacheClient
         return newAccessToken.AccessToken;
     }
 
-    private async Task<AccessTokenItem> GetApiTokenOboAad(string clientId, 
+    private async Task<AccessTokenItem> GetApiTokenOboAad(string clientId,
         string scope, string clientSecret, string aadAccessToken)
     {
-        try
-        {
-            var oboHttpClient = _httpClientFactory.CreateClient();
-            oboHttpClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.IdentityProviderUrl);
+        var oboHttpClient = _httpClientFactory.CreateClient();
+        oboHttpClient.BaseAddress = new Uri(_downstreamApiConfigurations.Value.IdentityProviderUrl);
 
-            var oboSuccessResponse = await RequestDelegatedAccessToken.GetDelegatedApiTokenObo(
-                new GetDelegatedApiTokenOboModel
-                {
-                    Scope = scope,
-                    AccessToken = aadAccessToken,
-                    ClientSecret = clientSecret,
-                    ClientId = clientId,
-                    EndpointUrl = "/connect/obotoken",
-                    OboHttpClient = oboHttpClient
-                }, _logger);
-
-            if (oboSuccessResponse != null)
+        var oboSuccessResponse = await RequestDelegatedAccessToken.GetDelegatedApiTokenObo(
+            new GetDelegatedApiTokenOboModel
             {
-                return new AccessTokenItem
-                {
-                    ExpiresIn = DateTime.UtcNow.AddSeconds(oboSuccessResponse.ExpiresIn),
-                    AccessToken = oboSuccessResponse.AccessToken
-                };
-            }
+                Scope = scope,
+                AccessToken = aadAccessToken,
+                ClientSecret = clientSecret,
+                ClientId = clientId,
+                EndpointUrl = "/connect/obotoken",
+                OboHttpClient = oboHttpClient
+            }, _logger);
 
-            // TODO add exception handling and error response flow
+        if (oboSuccessResponse != null)
+        {
             return new AccessTokenItem
             {
-                ExpiresIn = DateTime.UtcNow,// DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn),
-                AccessToken = "unhandledexception" // tokenResponse.AccessToken
+                ExpiresIn = DateTime.UtcNow.AddSeconds(oboSuccessResponse.ExpiresIn),
+                AccessToken = oboSuccessResponse.AccessToken
             };
-                
         }
-        catch (Exception e)
-        {
-            _logger.LogError("Exception {e}", e);
-            throw new ApplicationException($"Exception {e}");
-        }
+
+        _logger.LogError("no success response from OBO access token request");
+        throw new ApplicationException("no success response from OBO access token request");
     }
 
     private void AddToCache(string key, AccessTokenItem accessTokenItem)
