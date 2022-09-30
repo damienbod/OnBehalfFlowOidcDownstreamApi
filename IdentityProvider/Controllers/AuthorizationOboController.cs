@@ -6,6 +6,7 @@ using OnBehalfFlowIntegration;
 using OnBehalfFlowIntegration.Server;
 using OpeniddictServer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 
 namespace IdentityProvider.Controllers
 {
@@ -49,6 +50,11 @@ namespace IdentityProvider.Controllers
                     errorResult.correlation_id,
                     errorResult.trace_id);
 
+                if (IdentityModelEventSource.ShowPII)
+                {
+                    _logger.LogDebug("OBO new access token returned {Sub} for assertion {assertion}", oboPayload.assertion);
+                }
+
                 return Unauthorized(errorResult);
             }
 
@@ -74,6 +80,11 @@ namespace IdentityProvider.Controllers
                     correlation_id = Guid.NewGuid().ToString(),
                     trace_id = Guid.NewGuid().ToString(),
                 };
+
+                if (IdentityModelEventSource.ShowPII)
+                {
+                    _logger.LogDebug("OBO new access token returned {Sub} for assertion {assertion}", oboPayload.assertion);
+                }
 
                 _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
                     errorResult.error,
@@ -105,7 +116,11 @@ namespace IdentityProvider.Controllers
 
             _logger.LogDebug("OBO new access token returned {Sub}", tokenData.Sub);
 
-            // Log PII data if active
+            if(IdentityModelEventSource.ShowPII)
+            {
+                _logger.LogDebug("OBO new access token returned {Sub} for user {Username}", tokenData.Sub,
+                    ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal));
+            }
 
             return Ok(new OboSuccessResponse
             {
