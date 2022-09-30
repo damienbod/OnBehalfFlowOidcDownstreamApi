@@ -27,7 +27,8 @@ public static class CreateDelegatedAccessTokenPayload
                 new Claim("username", payload.UserName) ,
                 new Claim("scope", payload.Scope),
                 new Claim("azp", payload.Azp),
-                new Claim("azpacr", payload.Azpacr)
+                new Claim("azpacr", payload.Azpacr),
+                new Claim("act", payload.OriginalClientId)
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             IssuedAt = DateTime.UtcNow,

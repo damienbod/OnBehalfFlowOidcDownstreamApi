@@ -110,6 +110,7 @@ namespace IdentityProvider.Controllers
                 Scope = _oboConfiguration.ScopeForNewAccessToken,
                 Audience = _oboConfiguration.AudienceForNewAccessToken,
                 Issuer = _oboConfiguration.IssuerForNewAccessToken,
+                OriginalClientId = _oboConfiguration.AccessTokenAudience
             };
 
             var accessToken = CreateDelegatedAccessTokenPayload.GenerateJwtTokenAsync(tokenData);
