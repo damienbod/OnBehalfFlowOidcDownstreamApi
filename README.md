@@ -1,4 +1,8 @@
-# On Behalf of Flow 
+# On Behalf Of Flow 
+
+This demo shows how to implement the On Behalf Of flow between an Azure AD protected API and an API protected using OpenIddict.
+
+![OBO](https://github.com/damienbod/OnBehalfFlowOidcDownstreamApi/blob/main/images/obo_aad_openiddict_01.png)
 
 # Links
 
