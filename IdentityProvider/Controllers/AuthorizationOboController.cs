@@ -8,6 +8,8 @@ using OpeniddictServer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using OpeniddictServer.Data;
 
 namespace IdentityProvider.Controllers
 {
@@ -17,14 +19,17 @@ namespace IdentityProvider.Controllers
         private readonly IConfiguration _configuration;
         private readonly OboConfiguration _oboConfiguration;
         private readonly ILogger<AuthorizationOboController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public AuthorizationOboController(IConfiguration configuration, 
             IWebHostEnvironment env, IOptions<OboConfiguration> oboConfiguration,
+            UserManager<ApplicationUser> userManager,
             ILoggerFactory loggerFactory)
         {
             _configuration = configuration;
             _environment = env;
             _oboConfiguration = oboConfiguration.Value;
+            _userManager= userManager;
             _logger = loggerFactory.CreateLogger<AuthorizationOboController>();
         }
 
@@ -58,7 +63,6 @@ namespace IdentityProvider.Controllers
 
             var claimsPrincipal = accessTokenValidationResult.ClaimsPrincipal;
 
-            // validate user is an email
             var name = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal);
             var isNameAnEmail = ValidateOboRequestPayload.IsEmailValid(name);
             if(!isNameAnEmail)
@@ -67,7 +71,11 @@ namespace IdentityProvider.Controllers
             }
 
             // validate user exists
-            // check in db
+            var user = await _userManager.FindByNameAsync(name);
+            if (user == null)
+            {
+                return UnauthorizedValidationNoUserExistsFailed();
+            }
 
             // use data and return new access token
             var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, _configuration);
@@ -99,6 +107,26 @@ namespace IdentityProvider.Controllers
                 AccessToken = accessToken,
                 Scope = oboPayload.scope
             });
+        }
+
+        private IActionResult UnauthorizedValidationNoUserExistsFailed()
+        {
+            var errorResult = new OboErrorResponse
+            {
+                error = "assertion has incorrect claims",
+                error_description = "user does not exist",
+                timestamp = DateTime.UtcNow,
+                correlation_id = Guid.NewGuid().ToString(),
+                trace_id = Guid.NewGuid().ToString(),
+            };
+
+            _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
+                errorResult.error,
+                errorResult.error_description,
+                errorResult.correlation_id,
+                errorResult.trace_id);
+
+            return Unauthorized(errorResult);
         }
 
         private IActionResult UnauthorizedValidationPrefferedUserNameFailed()
