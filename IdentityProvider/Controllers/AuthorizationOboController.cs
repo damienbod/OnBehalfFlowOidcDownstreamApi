@@ -7,6 +7,7 @@ using OnBehalfFlowIntegration.Server;
 using OpeniddictServer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
+using System.Security.Claims;
 
 namespace IdentityProvider.Controllers
 {
@@ -35,27 +36,7 @@ namespace IdentityProvider.Controllers
 
             if(!Valid)
             {
-                var errorResult = new OboErrorResponse
-                {
-                    error = "Validation request parameters failed",
-                    error_description = Reason,
-                    timestamp = DateTime.UtcNow,
-                    correlation_id = Guid.NewGuid().ToString(),
-                    trace_id = Guid.NewGuid().ToString(),
-                };
-
-                _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}", 
-                    errorResult.error, 
-                    errorResult.error_description,
-                    errorResult.correlation_id,
-                    errorResult.trace_id);
-
-                if (IdentityModelEventSource.ShowPII)
-                {
-                    _logger.LogDebug("OBO new access token returned for assertion {assertion}", oboPayload.assertion);
-                }
-
-                return Unauthorized(errorResult);
+                return UnauthorizedValidationParametersFailed(oboPayload, Reason);
             }
 
             // get claims from aad token and re use in OpenIddict token
@@ -72,30 +53,21 @@ namespace IdentityProvider.Controllers
             
             if(!accessTokenValidationResult.Valid)
             {
-                var errorResult = new OboErrorResponse
-                {
-                    error = "Validation request parameters failed",
-                    error_description = accessTokenValidationResult.Reason,
-                    timestamp = DateTime.UtcNow,
-                    correlation_id = Guid.NewGuid().ToString(),
-                    trace_id = Guid.NewGuid().ToString(),
-                };
-
-                if (IdentityModelEventSource.ShowPII)
-                {
-                    _logger.LogDebug("OBO new access token returned for assertion {assertion}", oboPayload.assertion);
-                }
-
-                _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
-                    errorResult.error,
-                    errorResult.error_description,
-                    errorResult.correlation_id,
-                    errorResult.trace_id);
-
-                return Unauthorized(errorResult);
+                return UnauthorizedValidationTokenAndSignatureFailed(oboPayload, accessTokenValidationResult);
             }
 
             var claimsPrincipal = accessTokenValidationResult.ClaimsPrincipal;
+
+            // validate user is an email
+            var name = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal);
+            var isNameAnEmail = ValidateOboRequestPayload.IsEmailValid(name);
+            if(!isNameAnEmail)
+            {
+                return UnauthorizedValidationPrefferedUserNameFailed();
+            }
+
+            // validate user exists
+            // check in db
 
             // use data and return new access token
             var (ActiveCertificate, _) = await Startup.GetCertificates(_environment, _configuration);
@@ -127,6 +99,76 @@ namespace IdentityProvider.Controllers
                 AccessToken = accessToken,
                 Scope = oboPayload.scope
             });
+        }
+
+        private IActionResult UnauthorizedValidationPrefferedUserNameFailed()
+        {
+            var errorResult = new OboErrorResponse
+            {
+                error = "assertion has incorrect claims",
+                error_description = "incorrect email used in preferred user name",
+                timestamp = DateTime.UtcNow,
+                correlation_id = Guid.NewGuid().ToString(),
+                trace_id = Guid.NewGuid().ToString(),
+            };
+
+            _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
+                errorResult.error,
+                errorResult.error_description,
+                errorResult.correlation_id,
+                errorResult.trace_id);
+
+            return Unauthorized(errorResult);
+        }
+
+        private IActionResult UnauthorizedValidationTokenAndSignatureFailed(OboPayload oboPayload, (bool Valid, string Reason, ClaimsPrincipal ClaimsPrincipal) accessTokenValidationResult)
+        {
+            var errorResult = new OboErrorResponse
+            {
+                error = "Validation request parameters failed",
+                error_description = accessTokenValidationResult.Reason,
+                timestamp = DateTime.UtcNow,
+                correlation_id = Guid.NewGuid().ToString(),
+                trace_id = Guid.NewGuid().ToString(),
+            };
+
+            if (IdentityModelEventSource.ShowPII)
+            {
+                _logger.LogDebug("OBO new access token returned for assertion {assertion}", oboPayload.assertion);
+            }
+
+            _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
+                errorResult.error,
+                errorResult.error_description,
+                errorResult.correlation_id,
+                errorResult.trace_id);
+
+            return Unauthorized(errorResult);
+        }
+
+        private IActionResult UnauthorizedValidationParametersFailed(OboPayload oboPayload, string Reason)
+        {
+            var errorResult = new OboErrorResponse
+            {
+                error = "Validation request parameters failed",
+                error_description = Reason,
+                timestamp = DateTime.UtcNow,
+                correlation_id = Guid.NewGuid().ToString(),
+                trace_id = Guid.NewGuid().ToString(),
+            };
+
+            _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
+                errorResult.error,
+                errorResult.error_description,
+                errorResult.correlation_id,
+                errorResult.trace_id);
+
+            if (IdentityModelEventSource.ShowPII)
+            {
+                _logger.LogDebug("OBO new access token returned for assertion {assertion}", oboPayload.assertion);
+            }
+
+            return Unauthorized(errorResult);
         }
     }
 }
