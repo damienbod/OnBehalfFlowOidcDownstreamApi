@@ -1,8 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Xml.Linq;
 
 namespace OnBehalfFlowIntegration.Server;
 
