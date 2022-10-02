@@ -44,7 +44,7 @@ public class AuthorizationOboController : Controller
             return UnauthorizedValidationParametersFailed(oboPayload, Reason);
         }
 
-        // get claims from aad token and re use in OpenIddict token
+        // get well known endpoints and validate access token sent in the assertion
         var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
             _oboConfiguration.AccessTokenMetadataAddress, 
             new OpenIdConnectConfigurationRetriever());
@@ -61,6 +61,7 @@ public class AuthorizationOboController : Controller
             return UnauthorizedValidationTokenAndSignatureFailed(oboPayload, accessTokenValidationResult);
         }
 
+        // get claims from aad token and re use in OpenIddict token
         var claimsPrincipal = accessTokenValidationResult.ClaimsPrincipal;
 
         var name = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal);
