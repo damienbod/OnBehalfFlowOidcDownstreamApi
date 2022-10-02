@@ -52,10 +52,7 @@ public static class CreateDelegatedAccessTokenPayload
             TokenType = "at+jwt"
         };
 
-        if (tokenDescriptor.AdditionalHeaderClaims == null)
-        {
-            tokenDescriptor.AdditionalHeaderClaims = new Dictionary<string, object>();
-        }
+        tokenDescriptor.AdditionalHeaderClaims ??= new Dictionary<string, object>();
 
         if (!tokenDescriptor.AdditionalHeaderClaims.ContainsKey("alg"))
         {
