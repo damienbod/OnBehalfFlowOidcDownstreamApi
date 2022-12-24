@@ -8,7 +8,11 @@ This demo shows how to implement the On Behalf Of flow between an Azure AD prote
 
 ![OBO](https://github.com/damienbod/OnBehalfFlowOidcDownstreamApi/blob/main/images/obo_aad_openiddict_01.png)
 
-# Links
+## History
+
+2022-12-24 Updated to .NET 7
+
+##  Links
 
 https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
 
