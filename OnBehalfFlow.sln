@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureAD", "AzureAD", "{E7FC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_docs", "_docs", "{10139D91-F048-4CB8-B756-0DF7BA31B2A6}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -18,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiAzureAuth", "AzureApps\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorAppAzureAuth", "AzureApps\RazorAppAzureAuth\RazorAppAzureAuth.csproj", "{3FC0BB5C-A410-4CD1-BC56-F601901436BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnBehalfFlowIntegration", "OnBehalfFlowIntegration\OnBehalfFlowIntegration.csproj", "{7116F9DA-45B0-41FC-9272-A47EDF6959BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnBehalfFlowIntegration", "OnBehalfFlowIntegration\OnBehalfFlowIntegration.csproj", "{7116F9DA-45B0-41FC-9272-A47EDF6959BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
