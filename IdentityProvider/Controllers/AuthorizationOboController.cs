@@ -64,6 +64,14 @@ public class AuthorizationOboController : Controller
         // get claims from aad token and re use in OpenIddict token
         var claimsPrincipal = accessTokenValidationResult.ClaimsPrincipal;
 
+
+        var isDelegatedToken = ValidateOboRequestPayload.IsDelegatedAadAccessToken(claimsPrincipal);
+
+        if (!isDelegatedToken)
+        {
+            return UnauthorizedValidationRequireDelegatedTokenFailed();
+        }
+
         var name = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal);
         var isNameAnEmail = ValidateOboRequestPayload.IsEmailValid(name);
         if(!isNameAnEmail)
@@ -199,4 +207,25 @@ public class AuthorizationOboController : Controller
 
         return Unauthorized(errorResult);
     }
+
+    private IActionResult UnauthorizedValidationRequireDelegatedTokenFailed()
+    {
+        var errorResult = new OboErrorResponse
+        {
+            error = "Validation request parameters failed, validation of delegated access token failed",
+            error_description = "Only delegated access tokens accepted",
+            timestamp = DateTime.UtcNow,
+            correlation_id = Guid.NewGuid().ToString(),
+            trace_id = Guid.NewGuid().ToString(),
+        };
+
+        _logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
+            errorResult.error,
+            errorResult.error_description,
+            errorResult.correlation_id,
+            errorResult.trace_id);
+
+        return Unauthorized(errorResult);
+    }
+
 }
