@@ -10,7 +10,7 @@ This demo shows how to implement the On Behalf Of flow between an Azure AD prote
 
 ## History
 
-2022-12-24 Updated to .NET 7
+2022-12-24 Updated to .NET 7, added Azure AD delegated token validation
 
 ##  Links
 
