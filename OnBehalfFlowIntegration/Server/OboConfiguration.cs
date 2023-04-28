@@ -23,5 +23,5 @@ public class OboConfiguration
     // new token claims
     [JsonPropertyName("AudienceForNewAccessToken")]
     public string AudienceForNewAccessToken { get; set; } = string.Empty;
-    public string IssuerForNewAccessToken { get; set; }
+    public string IssuerForNewAccessToken { get; set; } = string.Empty;
 }

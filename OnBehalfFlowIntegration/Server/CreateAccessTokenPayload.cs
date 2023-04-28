@@ -19,10 +19,10 @@ public static class CreateDelegatedAccessTokenPayload
         //}
 
         var subject = new ClaimsIdentity(new[] {
-                new Claim("sub", payload.Sub),              
-                new Claim("scope", payload.Scope),
-                new Claim("act", $"{{ \"sub\": \"{payload.OriginalClientId}\" }}", JsonClaimValueTypes.Json )
-            });
+            new Claim("sub", payload.Sub),              
+            new Claim("scope", payload.Scope),
+            new Claim("act", $"{{ \"sub\": \"{payload.OriginalClientId}\" }}", JsonClaimValueTypes.Json )
+        });
 
         if(payload.ClaimsPrincipal != null)
         {
