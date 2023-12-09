@@ -10,6 +10,7 @@ This demo shows how to implement the On Behalf Of flow between an Azure AD prote
 
 ## History
 
+- 2023-12-09 Updated .NET 8
 - 2023-11-03 Updated packages
 - 2023-09-22 Updated packages
 - 2023-04-28 Updated packages
