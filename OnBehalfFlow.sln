@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DownstreamApi", "Downstream
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiMicrosoftEntraIDAuth", "AzureApps\ApiAzureAuth\ApiMicrosoftEntraIDAuth.csproj", "{E5D3F964-6714-40EA-A8A5-A663212A7D40}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorAppAzureAuth", "AzureApps\RazorAppAzureAuth\RazorAppAzureAuth.csproj", "{3FC0BB5C-A410-4CD1-BC56-F601901436BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorPageMicrosoftEntraIDAuth", "AzureApps\RazorAppAzureAuth\RazorPageMicrosoftEntraIDAuth.csproj", "{3FC0BB5C-A410-4CD1-BC56-F601901436BC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnBehalfFlowIntegration", "OnBehalfFlowIntegration\OnBehalfFlowIntegration.csproj", "{7116F9DA-45B0-41FC-9272-A47EDF6959BE}"
 EndProject
