@@ -61,9 +61,8 @@ public class AuthorizationOboController : Controller
             return UnauthorizedValidationTokenAndSignatureFailed(oboPayload, accessTokenValidationResult);
         }
 
-        // get claims from aad token and re use in OpenIddict token
+        // get claims from Microsoft Entra ID token and re use in OpenIddict token
         var claimsPrincipal = accessTokenValidationResult.ClaimsPrincipal;
-
 
         var isDelegatedToken = ValidateOboRequestPayload.IsDelegatedAadAccessToken(claimsPrincipal);
 
