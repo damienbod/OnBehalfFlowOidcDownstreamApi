@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityProvider", "IdentityProvider\IdentityProvider.csproj", "{C18DA1E5-4019-4AD9-AD32-F89A6B972946}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureAD", "AzureAD", "{E7FCAA8E-F5A3-4DCB-8FF0-45442C1B45D8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MicrosoftEntraID", "MicrosoftEntraID", "{E7FCAA8E-F5A3-4DCB-8FF0-45442C1B45D8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_docs", "_docs", "{10139D91-F048-4CB8-B756-0DF7BA31B2A6}"
 	ProjectSection(SolutionItems) = preProject
