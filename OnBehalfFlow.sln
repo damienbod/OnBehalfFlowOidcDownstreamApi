@@ -15,9 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_docs", "_docs", "{10139D91
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DownstreamApi", "DownstreamApi\DownstreamApi.csproj", "{10C24777-52DC-4527-8D24-AFF7E8A8320A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiMicrosoftEntraIDAuth", "MicrosoftEntraID\ApiAzureAuth\ApiMicrosoftEntraIDAuth.csproj", "{E5D3F964-6714-40EA-A8A5-A663212A7D40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiMicrosoftEntraIDAuth", "MicrosoftEntraID\Api\ApiMicrosoftEntraIDAuth.csproj", "{E5D3F964-6714-40EA-A8A5-A663212A7D40}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorPageMicrosoftEntraIDAuth", "MicrosoftEntraID\RazorAppAzureAuth\RazorPageMicrosoftEntraIDAuth.csproj", "{3FC0BB5C-A410-4CD1-BC56-F601901436BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorPageMicrosoftEntraIDAuth", "MicrosoftEntraID\RazorPage\RazorPageMicrosoftEntraIDAuth.csproj", "{3FC0BB5C-A410-4CD1-BC56-F601901436BC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnBehalfFlowIntegration", "OnBehalfFlowIntegration\OnBehalfFlowIntegration.csproj", "{7116F9DA-45B0-41FC-9272-A47EDF6959BE}"
 EndProject
