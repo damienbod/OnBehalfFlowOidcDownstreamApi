@@ -1,4 +1,4 @@
-﻿namespace ApiAzureAuth;
+﻿namespace ApiMicrosoftEntraIDAuth;
 
 public class DownstreamApi
 {

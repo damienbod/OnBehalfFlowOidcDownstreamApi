@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using OnBehalfFlowIntegration.Client;
 using System.Text.Json;
 
-namespace ApiAzureAuth;
+namespace ApiMicrosoftEntraIDAuth;
 
 public class ApiTokenCacheClient
 {
