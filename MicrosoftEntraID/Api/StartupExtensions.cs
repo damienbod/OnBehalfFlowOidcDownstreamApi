@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
@@ -6,25 +6,26 @@ using Microsoft.OpenApi.Models;
 using ApiMicrosoftEntraIDAuth;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Serilog;
 
 namespace DownstreamOpenIddictWebApi;
 
-public class Startup(IConfiguration configuration)
+internal static class StartupExtensions
 {
-    public IConfiguration Configuration { get; } = configuration;
-
-    public void ConfigureServices(IServiceCollection services)
+    public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        var services = builder.Services;
+        var configuration = builder.Configuration;
+
         services.AddTransient<ApiService>();
         services.AddTransient<ApiTokenCacheClient>();
         services.AddHttpClient();
-        services.Configure<DownstreamApi>(Configuration.GetSection("DownstreamApi"));
+        services.Configure<DownstreamApi>(configuration.GetSection("DownstreamApi"));
 
         services.AddOptions();
-
         services.AddDistributedMemoryCache();
 
-        services.AddMicrosoftIdentityWebApiAuthentication(Configuration, "AzureAd")
+        services.AddMicrosoftIdentityWebApiAuthentication(configuration, "AzureAd")
             .EnableTokenAcquisitionToCallDownstreamApi()
             .AddDistributedTokenCaches();
 
@@ -73,14 +74,18 @@ public class Startup(IConfiguration configuration)
                 .Build();
             options.Filters.Add(new AuthorizeFilter(policy));
         });
-    }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        return builder.Build();
+    }
+    
+    public static WebApplication ConfigurePipeline(this WebApplication app)
     {
         IdentityModelEventSource.ShowPII = true;
         JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-        if (env.IsDevelopment())
+        app.UseSerilogRequestLogging();
+
+        if (app.Environment!.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
         }
@@ -104,9 +109,8 @@ public class Startup(IConfiguration configuration)
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.MapControllers();
+
+        return app;
     }
 }
