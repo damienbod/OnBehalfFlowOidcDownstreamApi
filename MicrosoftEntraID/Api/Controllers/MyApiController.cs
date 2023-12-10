@@ -7,7 +7,7 @@ using Microsoft.Net.Http.Headers;
 namespace ApiMicrosoftEntraIDAuth.Controllers
 {
     [Authorize]
-    [AuthorizeForScopes(Scopes = new string[] { "api://72286b8d-5010-4632-9cea-e69e565a5517/user_impersonation" })]
+    [AuthorizeForScopes(Scopes = ["api://72286b8d-5010-4632-9cea-e69e565a5517/user_impersonation"])]
     [ApiController]
     [Route("[controller]")]
     public class MyApiController : ControllerBase
