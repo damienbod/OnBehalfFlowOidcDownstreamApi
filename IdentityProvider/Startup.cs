@@ -1,20 +1,16 @@
 using Fido2Identity;
 using Fido2NetLib;
-using idunno.Authentication.Basic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
-using OAuthGrantExchangeIntegration.Server;
-using OAuthGrantExchangeIntegration;
 using OpeniddictServer.Data;
 using Quartz;
 using Serilog;
 using static OpenIddict.Abstractions.OpenIddictConstants;
-using Microsoft.Extensions.Options;
-using System.Security.Claims;
 using StsServerIdentity.Services.Certificate;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.JsonWebTokens;
+using OnBehalfFlowIntegration.Server;
 
 namespace OpeniddictServer;
 
@@ -28,7 +24,7 @@ internal static class StartupExtensions
         services.AddControllersWithViews();
         services.AddRazorPages();
 
-        services.Configure<OboConfiguration>(Configuration.GetSection("OboConfiguration"));
+        services.Configure<OboConfiguration>(configuration.GetSection("OboConfiguration"));
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {
