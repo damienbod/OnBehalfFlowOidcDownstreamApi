@@ -52,6 +52,7 @@ public static class RequestDelegatedAccessToken
         else
         {
             // unknown error, log
+            var testc = response.Content.ReadAsStringAsync();
             logger.LogInformation("RequestDelegatedAccessToken Error unknown reason");
         }
 
