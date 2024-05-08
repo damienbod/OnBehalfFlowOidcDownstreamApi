@@ -29,9 +29,9 @@ public class AzureMyApiService
         var client = _clientFactory.CreateClient();
 
         var scope = _configuration["MyApi:ScopeForAccessToken"];
-        var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] { scope });
+        var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync([scope!]);
 
-        client.BaseAddress = new Uri(_configuration["MyApi:ApiBaseAddress"]);
+        client.BaseAddress = new Uri(_configuration["MyApi:ApiBaseAddress"]!);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
