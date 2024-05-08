@@ -17,7 +17,7 @@ This demo shows how to implement the On Behalf Of flow between a Microsoft Entra
 - 2023-04-28 Updated packages
 - 2022-12-24 Updated to .NET 7, added Microsoft Entra ID delegated token validation
 
-##  Links
+## Links
 
 https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
 
