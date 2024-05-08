@@ -7,5 +7,4 @@ public class DownstreamApi
     public string ClientId { get; set; } = string.Empty;
     public string ClientSecret { get; set; } = string.Empty;
     public string ScopeForAccessToken { get; set; } = string.Empty;
-
 }

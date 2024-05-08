@@ -11,17 +11,17 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, loggingConfiguration) => loggingConfiguration
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
-        .WriteTo.File("../../_logs-api-me-id-auth-api.txt")
-        .Enrich.FromLogContext()
-        .ReadFrom.Configuration(context.Configuration));
+    builder.Host.UseSerilog((context, loggingConfiguration) => loggingConfiguration
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
+            .WriteTo.File("../../_logs-api-me-id-auth-api.txt")
+            .Enrich.FromLogContext()
+            .ReadFrom.Configuration(context.Configuration));
 
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
 
-app.Run();
+    app.Run();
 }
 catch (Exception ex) when (ex.GetType().Name is not "StopTheHostException" && ex.GetType().Name is not "HostAbortedException")
 {
