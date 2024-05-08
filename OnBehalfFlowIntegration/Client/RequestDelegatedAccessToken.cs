@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace OnBehalfFlowIntegration.Client;
 
@@ -36,7 +36,7 @@ public static class RequestDelegatedAccessToken
             var errorResult = await JsonSerializer.DeserializeAsync<OboErrorResponse>(
            await response.Content.ReadAsStreamAsync());
 
-            if(errorResult != null)
+            if (errorResult != null)
             {
                 logger.LogInformation("{error} {error_description} {correlation_id} {trace_id}",
                     errorResult.error,
@@ -52,6 +52,7 @@ public static class RequestDelegatedAccessToken
         else
         {
             // unknown error, log
+            var testc = response.Content.ReadAsStringAsync();
             logger.LogInformation("RequestDelegatedAccessToken Error unknown reason");
         }
 

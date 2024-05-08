@@ -16,5 +16,4 @@ public class OboSuccessResponse
     // Consider implementing token exchange specs instead of MS OBO
     //[JsonPropertyName("issued_token_type")]
     //public string IssuedTokenType { get; set; } = "urn:ietf:params:oauth:token-type:access_token";
-
 }

@@ -34,7 +34,7 @@ public class ApiTokenCacheClient
         _cache = cache;
     }
 
-    public async Task<string> GetApiTokenObo(string clientId, 
+    public async Task<string> GetApiTokenObo(string clientId,
         string scope, string clientSecret, string aadAccessToken)
     {
         var accessToken = GetFromCache(clientId);
@@ -54,7 +54,7 @@ public class ApiTokenCacheClient
         _logger.LogDebug("GetApiToken new from STS for {api_name}", clientId);
 
         // add
-        var newAccessToken = await GetApiTokenOboAad( clientId,  scope,  clientSecret, aadAccessToken);
+        var newAccessToken = await GetApiTokenOboAad(clientId, scope, clientSecret, aadAccessToken);
         AddToCache(clientId, newAccessToken);
 
         return newAccessToken.AccessToken;

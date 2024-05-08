@@ -9,7 +9,7 @@ public static class ValidateOboRequestPayload
 {
     public static (bool Valid, string Reason) IsValid(OboPayload oboPayload, OboConfiguration oboConfiguration)
     {
-        if(!oboPayload.requested_token_use.ToLower().Equals("on_behalf_of"))
+        if (!oboPayload.requested_token_use.ToLower().Equals("on_behalf_of"))
         {
             return (false, "obo requested_token_use parameter has an incorrect value, expected on_behalf_of");
         };
@@ -38,8 +38,8 @@ public static class ValidateOboRequestPayload
     }
 
     public static (bool Valid, string Reason, ClaimsPrincipal? ClaimsPrincipal) ValidateTokenAndSignature(
-        string jwtToken, 
-        OboConfiguration oboConfiguration, 
+        string jwtToken,
+        OboConfiguration oboConfiguration,
         ICollection<SecurityKey> signingKeys)
     {
         try
@@ -54,7 +54,7 @@ public static class ValidateOboRequestPayload
                 IssuerSigningKeys = signingKeys,
                 ValidateIssuer = true,
                 ValidIssuer = oboConfiguration.AccessTokenAuthority,
-                ValidateAudience = true, 
+                ValidateAudience = true,
                 ValidAudience = oboConfiguration.AccessTokenAudience
             };
 

@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using OnBehalfFlowIntegration;
 using OnBehalfFlowIntegration.Server;
 using OpeniddictServer;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Logging;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using OpeniddictServer.Data;
+using System.Security.Claims;
 
 namespace IdentityProvider.Controllers;
 
@@ -21,7 +21,7 @@ public class AuthorizationOboController : Controller
     private readonly ILogger<AuthorizationOboController> _logger;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public AuthorizationOboController(IConfiguration configuration, 
+    public AuthorizationOboController(IConfiguration configuration,
         IWebHostEnvironment env, IOptions<OboConfiguration> oboConfiguration,
         UserManager<ApplicationUser> userManager,
         ILoggerFactory loggerFactory)
@@ -29,7 +29,7 @@ public class AuthorizationOboController : Controller
         _configuration = configuration;
         _environment = env;
         _oboConfiguration = oboConfiguration.Value;
-        _userManager= userManager;
+        _userManager = userManager;
         _logger = loggerFactory.CreateLogger<AuthorizationOboController>();
     }
 
@@ -39,24 +39,24 @@ public class AuthorizationOboController : Controller
     {
         var (Valid, Reason) = ValidateOboRequestPayload.IsValid(oboPayload, _oboConfiguration);
 
-        if(!Valid)
+        if (!Valid)
         {
             return UnauthorizedValidationParametersFailed(oboPayload, Reason);
         }
 
         // get well known endpoints and validate access token sent in the assertion
         var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-            _oboConfiguration.AccessTokenMetadataAddress, 
+            _oboConfiguration.AccessTokenMetadataAddress,
             new OpenIdConnectConfigurationRetriever());
 
-        var wellKnownEndpoints =  await configurationManager.GetConfigurationAsync();
+        var wellKnownEndpoints = await configurationManager.GetConfigurationAsync();
 
         var accessTokenValidationResult = ValidateOboRequestPayload.ValidateTokenAndSignature(
             oboPayload.assertion,
             _oboConfiguration,
             wellKnownEndpoints.SigningKeys);
-        
-        if(!accessTokenValidationResult.Valid)
+
+        if (!accessTokenValidationResult.Valid)
         {
             return UnauthorizedValidationTokenAndSignatureFailed(oboPayload, accessTokenValidationResult);
         }
@@ -73,7 +73,7 @@ public class AuthorizationOboController : Controller
 
         var name = ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal);
         var isNameAnEmail = ValidateOboRequestPayload.IsEmailValid(name);
-        if(!isNameAnEmail)
+        if (!isNameAnEmail)
         {
             return UnauthorizedValidationPrefferedUserNameFailed();
         }
@@ -103,7 +103,7 @@ public class AuthorizationOboController : Controller
 
         _logger.LogInformation("OBO new access token returned sub {sub}", tokenData.Sub);
 
-        if(IdentityModelEventSource.ShowPII)
+        if (IdentityModelEventSource.ShowPII)
         {
             _logger.LogDebug("OBO new access token returned for sub {sub} for user {Username}", tokenData.Sub,
                 ValidateOboRequestPayload.GetPreferredUserName(claimsPrincipal));

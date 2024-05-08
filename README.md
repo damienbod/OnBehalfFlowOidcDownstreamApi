@@ -10,6 +10,7 @@ This demo shows how to implement the On Behalf Of flow between a Microsoft Entra
 
 ## History
 
+- 2024-05-08 Updated packages
 - 2023-12-09 Updated .NET 8
 - 2023-11-03 Updated packages
 - 2023-09-22 Updated packages

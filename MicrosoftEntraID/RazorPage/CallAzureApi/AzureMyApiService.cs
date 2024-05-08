@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Web;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -16,8 +15,8 @@ public class AzureMyApiService
     private readonly ITokenAcquisition _tokenAcquisition;
     private readonly IConfiguration _configuration;
 
-    public AzureMyApiService(IHttpClientFactory clientFactory, 
-        ITokenAcquisition tokenAcquisition, 
+    public AzureMyApiService(IHttpClientFactory clientFactory,
+        ITokenAcquisition tokenAcquisition,
         IConfiguration configuration)
     {
         _clientFactory = clientFactory;
@@ -30,9 +29,9 @@ public class AzureMyApiService
         var client = _clientFactory.CreateClient();
 
         var scope = _configuration["MyApi:ScopeForAccessToken"];
-        var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] { scope });
+        var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync([scope!]);
 
-        client.BaseAddress = new Uri(_configuration["MyApi:ApiBaseAddress"]);
+        client.BaseAddress = new Uri(_configuration["MyApi:ApiBaseAddress"]!);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

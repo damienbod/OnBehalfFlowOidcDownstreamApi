@@ -19,18 +19,18 @@ public static class CreateDelegatedAccessTokenPayload
         //}
 
         var subject = new ClaimsIdentity(new[] {
-            new Claim("sub", payload.Sub),              
+            new Claim("sub", payload.Sub),
             new Claim("scope", payload.Scope),
             new Claim("act", $"{{ \"sub\": \"{payload.OriginalClientId}\" }}", JsonClaimValueTypes.Json )
         });
 
-        if(payload.ClaimsPrincipal != null)
+        if (payload.ClaimsPrincipal != null)
         {
             var name = ValidateOboRequestPayload.GetPreferredUserName(payload.ClaimsPrincipal);
             var azp = ValidateOboRequestPayload.GetAzp(payload.ClaimsPrincipal);
             var azpacr = ValidateOboRequestPayload.GetAzpacr(payload.ClaimsPrincipal);
 
-            if(!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
                 subject.AddClaim(new Claim("name", name));
 
             if (!string.IsNullOrEmpty(name))
@@ -42,7 +42,7 @@ public static class CreateDelegatedAccessTokenPayload
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor
-        {       
+        {
             Subject = subject,
             Expires = DateTime.UtcNow.AddHours(1),
             IssuedAt = DateTime.UtcNow,
