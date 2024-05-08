@@ -352,3 +352,5 @@ MigrationBackup/
 /AzureApps/_logs-api-azure-auth-api.txt
 /_logs-api-azure-auth-api.txt
 /_logs-IdentityProvider.txt
+
+/_logs-api-me-id-auth-api.txt
