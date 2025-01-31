@@ -10,7 +10,7 @@ using RazorPageMicrosoftEntraIDAuth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddTransient<AzureMyApiService>();
+builder.Services.AddTransient<EntraIDMyApiService>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddOptions();
