@@ -45,10 +45,6 @@ public class ApiTokenCacheClient
             {
                 return accessToken.AccessToken;
             }
-            else
-            {
-                // remove  => NOT Needed for this cache type
-            }
         }
 
         _logger.LogDebug("GetApiToken new from STS for {api_name}", clientId);

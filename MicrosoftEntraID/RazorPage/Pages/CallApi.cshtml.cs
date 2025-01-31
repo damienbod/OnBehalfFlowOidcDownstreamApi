@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Identity.Web;
-using RazorPageMicrosoftEntraIDAuth;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
