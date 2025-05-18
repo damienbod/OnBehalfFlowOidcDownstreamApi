@@ -12,27 +12,32 @@ public static class ValidateOboRequestPayload
         if (!oboPayload.requested_token_use.ToLower().Equals("on_behalf_of"))
         {
             return (false, "obo requested_token_use parameter has an incorrect value, expected on_behalf_of");
-        };
+        }
+        ;
 
         if (!oboPayload.grant_type.ToLower().Equals("urn:ietf:params:oauth:grant-type:jwt-bearer"))
         {
             return (false, "obo grant_type parameter has an incorrect value, expected urn:ietf:params:oauth:grant-type:jwt-bearer");
-        };
+        }
+        ;
 
         if (!oboPayload.client_id.Equals(oboConfiguration.ClientId))
         {
             return (false, "obo client_id parameter has an incorrect value");
-        };
+        }
+        ;
 
         if (!oboPayload.client_secret.Equals(OboExtentions.ToSha256(oboConfiguration.ClientSecret)))
         {
             return (false, "obo client secret parameter has an incorrect value");
-        };
+        }
+        ;
 
         if (!oboPayload.scope.ToLower().Equals(oboConfiguration.ScopeForNewAccessToken.ToLower()))
         {
             return (false, "obo scope parameter has an incorrect value");
-        };
+        }
+        ;
 
         return (true, string.Empty);
     }

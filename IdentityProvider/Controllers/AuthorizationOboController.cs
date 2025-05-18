@@ -75,7 +75,7 @@ public class AuthorizationOboController : Controller
         var isNameAnEmail = ValidateOboRequestPayload.IsEmailValid(name);
         if (!isNameAnEmail)
         {
-            return UnauthorizedValidationPrefferedUserNameFailed();
+            return UnauthorizedValidationPreferredUserNameFailed();
         }
 
         // validate user exists
@@ -137,7 +137,7 @@ public class AuthorizationOboController : Controller
         return Unauthorized(errorResult);
     }
 
-    private IActionResult UnauthorizedValidationPrefferedUserNameFailed()
+    private IActionResult UnauthorizedValidationPreferredUserNameFailed()
     {
         var errorResult = new OboErrorResponse
         {

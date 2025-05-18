@@ -46,7 +46,7 @@ public class ApiService
                 if (data != null)
                     return data;
 
-                return new List<string>();
+                return [];
             }
 
             throw new ApplicationException($"Status code: {response.StatusCode}, Error: {response.ReasonPhrase}");
