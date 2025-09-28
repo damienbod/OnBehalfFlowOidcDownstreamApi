@@ -10,6 +10,7 @@ This demo shows how to implement the On Behalf Of flow between a Microsoft Entra
 
 ## History
 
+- 2025-09-28 Updated packages
 - 2025-05-17 Updated packages
 - 2025-01-31 Updated packages
 - 2024-12-31 Updated packages. .NET 9, OpenIddict V6, Bootstrap 5
